@@ -1,1 +1,46 @@
-<html><body>Startseite</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
+
+  
+  <script>
+    const targetURL = new URLSearchParams(window.location.search).get('u');
+
+    if (targetURL) {
+      
+      setTimeout(() => {
+        var adConfig = {
+          "ads_host": "a.pemsrv.com",
+          "syndication_host": "s.pemsrv.com",
+          "idzone": 5653734, // 
+          "frequency_period": 0,
+          "close_on_click": false,
+          "debug": false
+        };
+
+        var protocol = location.protocol === "https:" ? "https:" : "http:";
+        var script = document.createElement("script");
+        script.src = protocol + "//a.pemsrv.com/popunder1000.js";
+        script.async = true;
+        script.onload = function () {
+          if (typeof window.executePopunder === "function") {
+            window.executePopunder(adConfig);
+          }
+        };
+        document.head.appendChild(script);
+      }, 500); 
+
+      
+      window.location.href = decodeURIComponent(targetURL);
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.innerHTML = "<p>No target URL specified.</p>";
+      });
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>
