@@ -2,45 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Redirecting...</title>
+  <title>Link Portal</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+  </style>
 
-  
+  <!-- ✅ Popunder script -->
   <script>
     const targetURL = new URLSearchParams(window.location.search).get('u');
 
+    setTimeout(() => {
+      var adConfig = {
+        "ads_host": "a.pemsrv.com",
+        "syndication_host": "s.pemsrv.com",
+        "idzone": 5653734,
+        "frequency_period": 0,
+        "close_on_click": false,
+        "debug": false
+      };
+
+      var script = document.createElement("script");
+      script.src = "https://a.pemsrv.com/popunder1000.js";
+      script.async = true;
+      script.onload = function () {
+        if (typeof window.executePopunder === "function") {
+          window.executePopunder(adConfig);
+        }
+      };
+      document.head.appendChild(script);
+    }, 500);
+
     if (targetURL) {
-      
       setTimeout(() => {
-        var adConfig = {
-          "ads_host": "a.pemsrv.com",
-          "syndication_host": "s.pemsrv.com",
-          "idzone": 5653734, // 
-          "frequency_period": 0,
-          "close_on_click": false,
-          "debug": false
-        };
-
-        var protocol = location.protocol === "https:" ? "https:" : "http:";
-        var script = document.createElement("script");
-        script.src = protocol + "//a.pemsrv.com/popunder1000.js";
-        script.async = true;
-        script.onload = function () {
-          if (typeof window.executePopunder === "function") {
-            window.executePopunder(adConfig);
-          }
-        };
-        document.head.appendChild(script);
-      }, 500); 
-
-      
-      window.location.href = decodeURIComponent(targetURL);
-    } else {
-      document.addEventListener("DOMContentLoaded", () => {
-        document.body.innerHTML = "<p>No target URL specified.</p>";
-      });
+        window.location.href = decodeURIComponent(targetURL);
+      }, 300);
     }
   </script>
 </head>
 <body>
+  <h1>Redirect Service</h1>
+  <p>This site allows redirection to third-party content and may display advertising links in accordance with EU law.</p>
+  <p>If you are not redirected automatically, <a id="manualLink" href="#">click here</a>.</p>
+  <script>
+    const link = document.getElementById("manualLink");
+    if (targetURL) link.href = decodeURIComponent(targetURL);
+  </script>
 </body>
 </html>
