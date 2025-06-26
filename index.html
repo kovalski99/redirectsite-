@@ -2,62 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FastLink Redirect</title>
+  <title>FastLink Gateway</title>
+
+  <!-- ======  Fancy Styles  ====== -->
   <style>
-    body{font-family:sans-serif;padding:2em;max-width:600px;margin:auto}
-    .button{display:inline-block;padding:10px 16px;background:#007bff;color:#fff;
-            text-decoration:none;border-radius:4px}
+    /* gradient backdrop */
+    html,body{height:100%;margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;
+      background:#141b29;background:linear-gradient(135deg,#141b29 0%,#3b2f80 45%,#ff0057 100%);
+      color:#fff;display:flex;align-items:center;justify-content:center;text-align:center}
+    /* glass-style card */
+    .card{background:rgba(255,255,255,.08);backdrop-filter:blur(8px);padding:48px 42px;border-radius:20px;
+      max-width:440px;box-shadow:0 8px 26px rgba(0,0,0,.4);animation:fade .8s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+    h1{margin:0 0 .8rem;font-size:2.1rem}
+    p{line-height:1.45rem;margin:0 0 1.8rem}
+    /* buttons */
+    .btn{display:inline-block;padding:14px 26px;margin:6px;border-radius:40px;font-weight:600;
+         text-decoration:none;transition:.25s}
+    .btn-primary{background:#ff0057;color:#fff}.btn-primary:hover{background:#ff3477;transform:translateY(-2px)}
+    .btn-secondary{background:#0000;border:2px solid #fff;color:#fff}.btn-secondary:hover{background:#ffffff22;transform:translateY(-2px)}
+    /* scroll box */
+    .scroll-box{max-height:130px;margin-top:20px;padding:10px;border:1px solid #ffffff44;border-radius:12px;
+      overflow-y:auto}
+    .scroll-box ul{list-style:none;padding:0;margin:0}
+    .scroll-box li{padding:4px 0;border-bottom:1px solid #ffffff22}
+    .scroll-box li:last-child{border-bottom:none}
+    footer{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:12px;color:#ccc}
+    a.link{color:#ccc;text-decoration:underline}
   </style>
 
+  <!-- ==============   CONFIG   ============== -->
   <script>
-    /************ SETTINGS – replace the ★ values ****************/
-    const DESKTOP_ZONE_ID = 5656102;   // ★ Web-Popunder zone ID (number only)
-    const MOBILE_ZONE_ID  = 5656108;    // ★ Mobile-Popunder zone ID (number only)
-    const FALLBACK_LINK   = "https://onlyfans.com";  // ★ Fixed link for the visible button
-    /************************************************************/
+    const 5656102  = ★DESKTOP_ZONE_ID★;      // numeric Web-Popunder ID
+    const 5656108  = ★MOBILE_ZONE_ID★;       // numeric Mobile-Popunder ID
+    const https://discord.gg/ZrfHpCuD       = "★YOUR_DISCORD_INVITE★"; // Discord invite URL
+    const https://discord.gg/ZrfHpCuD       = "★LATEST_LEAK_LINK★";    // fixed leak URL
+  </script>
+  <!-- ======================================== -->
 
-    const targetURL = new URLSearchParams(window.location.search).get('u');
-    const isMobile  = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  <script>
+    /* ---------- Main redirect / pop-under logic ---------- */
+    const qp      = new URLSearchParams(location.search);
+    const target  = qp.get('u');
+    const isMob   = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    /* Pop-under loader – only if we have a target URL */
-    function loadPopunder(){  
-      const adConfig = {
-        ads_host: "a.pemsrv.com",
-        syndication_host: "s.pemsrv.com",
-        idzone: isMobile ? MOBILE_ZONE_ID : DESKTOP_ZONE_ID,
-        frequency_period: 0,
-        close_on_click: false,
-        debug: false
-      };
-      const s = document.createElement("script");
-      s.src = "https://a.pemsrv.com/popunder1000.js";
-      s.async = true;
-      s.onload = () => (typeof window.executePopunder==="function") && window.executePopunder(adConfig);
+    function triggerPop(){
+      const cfg={ads_host:"a.pemsrv.com",syndication_host:"s.pemsrv.com",
+        idzone:isMob?MOBILE_ZONE_ID:DESKTOP_ZONE_ID,frequency_period:0,close_on_click:false,debug:false};
+      const s=document.createElement('script');
+      s.src="https://a.pemsrv.com/popunder1000.js";s.async=true;
+      s.onload=()=>typeof window.executePopunder==='function'&&window.executePopunder(cfg);
       document.head.appendChild(s);
     }
 
-    /* MAIN LOGIC */
-    if (targetURL){
-      /* trigger pop-under half a second after page load */
-      setTimeout(loadPopunder, 500);
-
-      /* redirect almost immediately so the user lands on the destination */
-      setTimeout(() => {
-        window.location.href = decodeURIComponent(targetURL);
-      }, 50);
+    if(target){
+      setTimeout(triggerPop,500);              // pop-under
+      setTimeout(()=>location.replace(decodeURIComponent(target)),50); // redirect
     }else{
-      /* No ?u= parameter → set visible button to fixed fallback link */
-      document.addEventListener("DOMContentLoaded",()=>{
-        document.getElementById("fallback").href = FALLBACK_LINK;
-        document.getElementById("fallback").innerText = "Click here";
+      document.addEventListener('DOMContentLoaded',()=>{
+        /* build landing card dynamically */
+        document.body.innerHTML=
+          `<div class="card">
+             <h1>Best Content & Hottest Leaks</h1>
+             <p>Unlock exclusive drops, private packs<br>and real-time updates.<br>Join our Discord or grab the latest leak!</p>
+             <a class="btn btn-primary" href="${https://discord.gg/ZrfHpCuD}" target="_blank" rel="noopener">Join Discord</a>
+             <a class="btn btn-secondary" href="${https://discord.gg/ZrfHpCuD}" target="_blank" rel="noopener">Latest Leak</a>
+
+             <div class="scroll-box">
+               <ul>
+                 <li>Real Teen Nudes</li>
+                 <li>Snapleaks</li>
+                 <li>Amateur Nudes</li>
+                 <li>Amateur</li>
+                 <li>Lana Rhoades</li>
+                 <li>Sophie Rain</li>
+                 <li>Breckie Hill</li>
+                 <li>Public</li>
+                 <li>Teens 18+</li>
+                 <li>Milfs</li>
+               </ul>
+             </div>
+           </div>
+           <footer>This gateway may display advertising links in compliance with the EU Digital Services Act. 
+             <a class="link" href="#">About</a></footer>`;
       });
     }
   </script>
 </head>
-<body>
-  <!-- Visible only when no ?u= param was supplied -->
-  <h1>Welcome to FastLink</h1>
-  <p>This service redirects visitors to selected content and may show advertising links in compliance with EU regulations.</p>
-  <p>If you are not redirected automatically, <a id="fallback" class="button" href="#">Click here</a>.</p>
-</body>
+<body></body>
 </html>
