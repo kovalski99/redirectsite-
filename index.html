@@ -5,19 +5,26 @@
   <title>FastLink Redirect</title>
   <style>
     body { font-family: sans-serif; padding: 2em; }
+    .button {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
   </style>
 
-  <!-- Popunder only triggers if redirect param exists -->
   <script>
     const targetURL = new URLSearchParams(window.location.search).get('u');
 
     if (targetURL) {
-      // Trigger ad after slight delay
+      // 🪟 Trigger Popunder Ad
       setTimeout(() => {
         var adConfig = {
           "ads_host": "a.pemsrv.com",
           "syndication_host": "s.pemsrv.com",
-          "idzone": 5653734, 
+          "idzone": 5653734, // 👈 Deine Zone-ID hier einfügen
           "frequency_period": 0,
           "close_on_click": false,
           "debug": false
@@ -34,7 +41,7 @@
         document.head.appendChild(script);
       }, 500);
 
-      // Redirect user
+      // ⏩ Redirect to actual target
       setTimeout(() => {
         window.location.href = decodeURIComponent(targetURL);
       }, 300);
@@ -42,15 +49,16 @@
   </script>
 </head>
 <body>
-  <h1>Welcome to FastLink</h1>
-  <p>This service redirects visitors to selected content and may display advertising links in accordance with EU digital regulations.</p>
-  <p>If you're not redirected automatically, <a href="#" id="fallback">click here</a>.</p>
+  <div id="info">
+    <h1>Welcome to FastLink</h1>
+    <p>This service redirects you to selected content and may show advertising links.</p>
+    <a class="button" href="https://onlyfans.com">Click here</a>
+  </div>
+
   <script>
-    const targetURL = new URLSearchParams(window.location.search).get('u');
+    // 🔒 Hide info block if ?u= is present
     if (targetURL) {
-      document.getElementById("fallback").href = decodeURIComponent(targetURL);
-    } else {
-      document.getElementById("fallback").remove();
+      document.getElementById("info").style.display = "none";
     }
   </script>
 </body>
