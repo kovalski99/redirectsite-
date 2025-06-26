@@ -4,62 +4,60 @@
   <meta charset="UTF-8" />
   <title>FastLink Redirect</title>
   <style>
-    body { font-family: sans-serif; padding: 2em; }
-    .button {
-      display: inline-block;
-      padding: 10px 16px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
+    body{font-family:sans-serif;padding:2em;max-width:600px;margin:auto}
+    .button{display:inline-block;padding:10px 16px;background:#007bff;color:#fff;
+            text-decoration:none;border-radius:4px}
   </style>
 
   <script>
+    /************ SETTINGS – replace the ★ values ****************/
+    const DESKTOP_ZONE_ID = 5656102;   // ★ Web-Popunder zone ID (number only)
+    const MOBILE_ZONE_ID  = 5656108;    // ★ Mobile-Popunder zone ID (number only)
+    const FALLBACK_LINK   = "https://onlyfans.com";  // ★ Fixed link for the visible button
+    /************************************************************/
+
     const targetURL = new URLSearchParams(window.location.search).get('u');
+    const isMobile  = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    if (targetURL) {
-      // 🪟 Trigger Popunder Ad
-      setTimeout(() => {
-        var adConfig = {
-          "ads_host": "a.pemsrv.com",
-          "syndication_host": "s.pemsrv.com",
-          "idzone": 5653734, // 👈 Deine Zone-ID hier einfügen
-          "frequency_period": 0,
-          "close_on_click": false,
-          "debug": false
-        };
+    /* Pop-under loader – only if we have a target URL */
+    function loadPopunder(){  
+      const adConfig = {
+        ads_host: "a.pemsrv.com",
+        syndication_host: "s.pemsrv.com",
+        idzone: isMobile ? MOBILE_ZONE_ID : DESKTOP_ZONE_ID,
+        frequency_period: 0,
+        close_on_click: false,
+        debug: false
+      };
+      const s = document.createElement("script");
+      s.src = "https://a.pemsrv.com/popunder1000.js";
+      s.async = true;
+      s.onload = () => (typeof window.executePopunder==="function") && window.executePopunder(adConfig);
+      document.head.appendChild(s);
+    }
 
-        var script = document.createElement("script");
-        script.src = "https://a.pemsrv.com/popunder1000.js";
-        script.async = true;
-        script.onload = function () {
-          if (typeof window.executePopunder === "function") {
-            window.executePopunder(adConfig);
-          }
-        };
-        document.head.appendChild(script);
-      }, 500);
+    /* MAIN LOGIC */
+    if (targetURL){
+      /* trigger pop-under half a second after page load */
+      setTimeout(loadPopunder, 500);
 
-      // ⏩ Redirect to actual target
+      /* redirect almost immediately so the user lands on the destination */
       setTimeout(() => {
         window.location.href = decodeURIComponent(targetURL);
-      }, 300);
+      }, 50);
+    }else{
+      /* No ?u= parameter → set visible button to fixed fallback link */
+      document.addEventListener("DOMContentLoaded",()=>{
+        document.getElementById("fallback").href = FALLBACK_LINK;
+        document.getElementById("fallback").innerText = "Click here";
+      });
     }
   </script>
 </head>
 <body>
-  <div id="info">
-    <h1>Welcome to FastLink</h1>
-    <p>This service redirects you to selected content and may show advertising links.</p>
-    <a class="button" href="https://onlyfans.com">Click here</a>
-  </div>
-
-  <script>
-    // 🔒 Hide info block if ?u= is present
-    if (targetURL) {
-      document.getElementById("info").style.display = "none";
-    }
-  </script>
+  <!-- Visible only when no ?u= param was supplied -->
+  <h1>Welcome to FastLink</h1>
+  <p>This service redirects visitors to selected content and may show advertising links in compliance with EU regulations.</p>
+  <p>If you are not redirected automatically, <a id="fallback" class="button" href="#">Click here</a>.</p>
 </body>
 </html>
