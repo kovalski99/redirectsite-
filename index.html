@@ -2,92 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FastLink Gateway</title>
-
-  <!-- ======  Fancy Styles  ====== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join HentaiWorld! (18+)</title>
   <style>
-    /* gradient backdrop */
-    html,body{height:100%;margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;
-      background:#141b29;background:linear-gradient(135deg,#141b29 0%,#3b2f80 45%,#ff0057 100%);
-      color:#fff;display:flex;align-items:center;justify-content:center;text-align:center}
-    /* glass-style card */
-    .card{background:rgba(255,255,255,.08);backdrop-filter:blur(8px);padding:48px 42px;border-radius:20px;
-      max-width:440px;box-shadow:0 8px 26px rgba(0,0,0,.4);animation:fade .8s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-    h1{margin:0 0 .8rem;font-size:2.1rem}
-    p{line-height:1.45rem;margin:0 0 1.8rem}
-    /* buttons */
-    .btn{display:inline-block;padding:14px 26px;margin:6px;border-radius:40px;font-weight:600;
-         text-decoration:none;transition:.25s}
-    .btn-primary{background:#ff0057;color:#fff}.btn-primary:hover{background:#ff3477;transform:translateY(-2px)}
-    .btn-secondary{background:#0000;border:2px solid #fff;color:#fff}.btn-secondary:hover{background:#ffffff22;transform:translateY(-2px)}
-    /* scroll box */
-    .scroll-box{max-height:130px;margin-top:20px;padding:10px;border:1px solid #ffffff44;border-radius:12px;
-      overflow-y:auto}
-    .scroll-box ul{list-style:none;padding:0;margin:0}
-    .scroll-box li{padding:4px 0;border-bottom:1px solid #ffffff22}
-    .scroll-box li:last-child{border-bottom:none}
-    footer{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:12px;color:#ccc}
-    a.link{color:#ccc;text-decoration:underline}
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: url('https://i.imgur.com/XsZQ7wP.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #2f3136;
+      color: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #000;
+      text-align: center;
+      width: 300px;
+    }
+    .overlay h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .overlay .stats {
+      font-size: 14px;
+      color: #b9bbbe;
+      margin: 10px 0;
+    }
+    .btn {
+      background-color: #5865f2;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background-color: #4752c4;
+    }
   </style>
-
-  <!-- ==============   CONFIG   ============== -->
-  <script>
-    const DESKTOP_ZONE_ID  = 5656102;      // numeric Web-Popunder ID
-    const MOBILE_ZONE_ID  = 5656108;       // numeric Mobile-Popunder ID
-    const DISCORD_LINK    = "https://discord.gg/ZrfHpCuD"; // Discord invite URL
-    const LEAK_LINK = "https://discord.gg/ZrfHpCuD";    // fixed leak URL
-  </script>
-  <!-- ======================================== -->
-
-  <script>
-    /* ---------- Main redirect / pop-under logic ---------- */
-    const qp      = new URLSearchParams(location.search);
-    const target  = qp.get('u');
-    const isMob   = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    function triggerPop(){
-      const cfg={ads_host:"a.pemsrv.com",syndication_host:"s.pemsrv.com",
-        idzone:isMob?MOBILE_ZONE_ID:DESKTOP_ZONE_ID,frequency_period:0,close_on_click:false,debug:false};
-      const s=document.createElement('script');
-      s.src="https://a.pemsrv.com/popunder1000.js";s.async=true;
-      s.onload=()=>typeof window.executePopunder==='function'&&window.executePopunder(cfg);
-      document.head.appendChild(s);
-    }
-
-    if(target){
-      setTimeout(triggerPop,500);              // pop-under
-      setTimeout(()=>location.replace(decodeURIComponent(target)),50); // redirect
-    }else{
-      document.addEventListener('DOMContentLoaded',()=>{
-        /* build landing card dynamically */
-        document.body.innerHTML=
-          `<div class="card">
-             <h1>Best Content & Hottest Leaks</h1>
-             <p>Unlock exclusive drops, private packs<br>and real-time updates.<br>Join our Discord or grab the latest leak!</p>
-             <a class="btn btn-primary" href="${DISCORD_LINK}" target="_blank" rel="noopener">Join Discord</a>
-             <a class="btn btn-secondary" href="${LEAK_LINK}" target="_blank" rel="noopener">Latest Leak</a>
-
-             <div class="scroll-box">
-               <ul>
-                 <li>Real Teen Nudes</li>
-                 <li>Snapleaks</li>
-                 <li>Amateur Nudes</li>
-                 <li>Amateur</li>
-                 <li>Lana Rhoades</li>
-                 <li>Sophie Rain</li>
-                 <li>Breckie Hill</li>
-                 <li>Public</li>
-                 <li>Teens 18+</li>
-                 <li>Milfs</li>
-               </ul>
-             </div>
-           </div>
-           <footer>This gateway may display advertising links in compliance with the EU Digital Services Act. 
-             <a class="link" href="#">About</a></footer>`;
-      });
-    }
-  </script>
 </head>
-<body></body>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get("u");
+    if (target) {
+      setTimeout(() => {
+        window.open("https://your-popunder-ad-url.com", "_blank");
+        window.location.href = target;
+      }, 300);
+    }
+  </script>
+
+  <div class="overlay">
+    <img src="https://i.imgur.com/Zht6ixA.png" alt="Logo" width="60" />
+    <h2>You've been invited to join<br><strong>HentaiWorld! (18+)</strong></h2>
+    <div class="stats">🟢 5,513 Online • 50,260 Members</div>
+    <a class="btn" href="https://discord.com/invite/KTNu77SR" target="_blank">Accept Invite</a>
+  </div>
+
+  <!-- INSERT POPUNDER SCRIPT BELOW -->
+  <script>
+    // Replace with your actual Zone IDs
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const zoneId = isMobile ? '5656108' : '5656102';
+
+    var adConfig = {
+      "zoneid": zoneId,
+      "ads_host": "a.pemsrv.com",
+      "syndication_host": "s.pemsrv.com"
+    };
+    (function() {
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "https://a.pemsrv.com/popunder1000.js";
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
 </html>
