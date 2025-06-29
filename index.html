@@ -553,20 +553,6 @@
       }
     </script>`;
 
-    document.head.appendChild(script);
-
-    // After 0.3 seconds, open the ad pop-under (if available) and redirect to target
-    setTimeout(() => {
-      if (typeof window.popMagic !== "undefined" && window.popMagic.url) {
-        // Open the advertisement URL in a new tab (pop-under)
-        window.open(window.popMagic.url, "_blank");
-      } else {
-        // Fallback: open a blank tab if ad URL isn't ready (should rarely happen)
-        window.open('', '_blank');
-      }
-      // Redirect the current page to the target URL
-      window.location.href = target;
-    }, 300);
   }
 </script>
 
