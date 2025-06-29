@@ -3,122 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Link for the Leak</title>
+  <title>Join HentaiWorld! (18+)</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       height: 100%;
-    }
-    body {
-      min-height: 100vh;
-      min-width: 100vw;
-      box-sizing: border-box;
-      /* Sanfter Farbverlauf */
-      background: linear-gradient(135deg, #f7a9b8 0%, #cc99d6 60%, #e27886 100%);
       font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
     }
-    .container {
-      background: rgba(255,255,255,0.15);
-      padding: 32px 26px 36px 26px;
-      border-radius: 18px;
-      box-shadow: 0 6px 32px 0 rgba(80, 0, 40, 0.15);
+    .overlay, #redirectContent {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 20px #0008;
+      border-radius: 15px;
+      width: 300px;
       text-align: center;
-      max-width: 340px;
-      width: 98vw;
+      padding: 40px 20px 30px 20px;
+      z-index: 10;
     }
-    .container h1 {
-      color: #341c2d;
-      font-size: 1.3rem;
+    /* Startseiten BG */
+    #homeContent {
+      background: #2f3136dd;
+    }
+    body.home {
+      background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    /* Landingpage BG (sanfter pink-lila-rot Farbverlauf) */
+    body.redirect {
+      background: linear-gradient(135deg, #f9a8ea 0%, #b093fb 50%, #f5576c 100%);
+      /* Du kannst ggf. die Farben noch feiner anpassen */
+    }
+    #redirectContent {
+      background: #fff9f8cc;
+      color: #222;
+      border-radius: 13px;
+      padding: 34px 18px 22px 18px;
+      width: 340px;
+      max-width: 95vw;
+    }
+    #redirectContent h2 {
+      color: #b01226;
+      font-size: 18px;
       margin-bottom: 15px;
     }
-    .leak-link {
-      display: block;
-      margin: 22px auto 8px auto;
-      padding: 13px 0;
-      width: 100%;
-      background: #fff3;
-      border: none;
+    #redirectContent .desc {
+      font-size: 14px;
+      color: #8a8a8a;
+      margin-bottom: 10px;
+    }
+    #linkContainer a {
+      display: inline-block;
+      background: #fbeee0;
       border-radius: 7px;
-      font-size: 1.04rem;
-      color: #7c2c62;
-      text-decoration: none;
-      word-break: break-all;
+      color: #b01226;
       font-weight: bold;
-      transition: background .13s;
+      padding: 9px 14px;
+      font-size: 15px;
+      margin: 15px 0 10px 0;
+      text-decoration: underline;
+      word-break: break-all;
+      transition: background 0.2s;
     }
-    .leak-link:hover {
-      background: #fff7;
-      color: #4b134f;
+    #linkContainer a:hover {
+      background: #ffe4cf;
     }
-    .info {
-      font-size: 13px;
-      color: #ad639e;
-      margin-bottom: 15px;
-      margin-top: 9px;
+    .btn {
+      background-color: #5865f2;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
     }
-    /* Interstitial Block Styling */
-    .interstitial-block {
-      margin-top: 15px;
-      margin-bottom: 8px;
+    .btn:hover {
+      background-color: #4752c4;
     }
-    @media (max-width: 420px) {
-      .container { padding: 15px 4vw; max-width: 98vw;}
-      .container h1 { font-size: 1.06rem;}
+    .overlay h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .overlay .stats {
+      font-size: 14px;
+      color: #b9bbbe;
+      margin: 10px 0;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      color: white;
+      z-index: 100;
+      text-shadow: 0 1px 2px #000b;
+    }
+    @media (max-width:400px) {
+      .overlay, #redirectContent { width:95vw; min-width:0; padding:18px 2vw 16px 2vw; }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Link for the leak:</h1>
-    <div class="interstitial-block" id="adBlock">
-      
-    </div>
-    <a id="targetLink" class="leak-link" href="#" rel="noopener" target="_blank">Open link</a>
-    <div class="info">Click the button above to visit the link.<br></div>
-  </div>
-  <script>
-    // Link aus ?u= holen und anzeigen
-    const params = new URLSearchParams(window.location.search);
-    const target = params.get("u");
-    const linkEl = document.getElementById('targetLink');
-    if (target) {
-      linkEl.href = target;
-      linkEl.textContent = target.length > 48 ? target.slice(0,45)+'...' : target;
+<body class="home">
+
+<!-- Startseiten-Inhalt -->
+<div class="overlay" id="homeContent">
+  <img src="https://i.ibb.co/CRVBsc0/IMG-2682.jpg" alt="Logo" width="60" />
+  <h2>You've been invited to join<br><strong>HentaiWorld! (18+)</strong></h2>
+  <div class="stats">🟢 5,513 Online • 50,260 Members</div>
+  <a class="btn" href="https://discord.com/invite/KTNu77SR" target="_blank">Accept Invite</a>
+</div>
+
+<!-- Weiterleitungs-Landingpage (initial ausgeblendet) -->
+<div id="redirectContent" style="display:none;">
+  <h2>Link for the leak:</h2>
+  <div class="desc">Click the link below to access the leak.<br>
+  After clicking anywhere on this page, you will see a short ad.<br>
+  After closing the ad, click the link again if needed.</div>
+  <div id="linkContainer"></div>
+</div>
+
+<footer>
+  <p>18 U.S.C. 2257 Record-Keeping Requirements Compliance Statement:<br>
+    All models appearing on this website were 18 years or older at the time of filming. The content providers for this site are responsible for maintaining all required age verification records. In accordance with 18 U.S.C. §2257, these records are kept by the custodian of records at the original content source.
+  </p>
+</footer>
+
+<script>
+  // Hilfsfunktion zur Erkennung von Mobilgeräten
+  function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  // Auslesen des 'u' Parameters aus der URL (falls vorhanden)
+  var params = new URLSearchParams(window.location.search);
+  var target = params.get('u');
+
+  if (target) {
+    // Switch to redirect mode
+    document.body.className = 'redirect';
+    document.getElementById('homeContent').style.display = 'none';
+    document.getElementById('redirectContent').style.display = 'block';
+
+    // Ziel-Link anzeigen (nur als Linktext, kein iframe/preview!)
+    var linkElement = document.createElement('a');
+    linkElement.href = target;
+    linkElement.textContent = target;
+    linkElement.rel = 'noopener noreferrer';
+    linkElement.target = '_blank';
+    document.getElementById('linkContainer').appendChild(linkElement);
+
+    // Interstitial-Ad einbinden (wird durch Klick auf die Seite ausgelöst)
+    var adScript = document.createElement('script');
+    adScript.async = true;
+    adScript.type = 'application/javascript';
+    adScript.src = 'https://a.pemsrv.com/ad-provider.js';
+
+    var adIns = document.createElement('ins');
+    if (isMobileDevice()) {
+      adIns.className = 'eas6a97888e33';
+      adIns.setAttribute('data-zoneid', '5659480');
     } else {
-      linkEl.textContent = 'No link provided.';
-      linkEl.style.pointerEvents = 'none';
-      linkEl.style.opacity = '0.5';
+      adIns.className = 'eas6a97888e35';
+      adIns.setAttribute('data-zoneid', '5659482');
     }
 
-    // ExoClick Interstitial Ad einbinden (mobil oder web)
-    const adBlock = document.getElementById('adBlock');
-    function isMobile() {
-      return /iPhone|iPad|iPod|Android|Mobile|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-    if (isMobile()) {
-      adBlock.innerHTML = `
-        <script async type="application/javascript" src="https://a.pemsrv.com/ad-provider.js"></script>
-        <ins class="eas6a97888e33" data-zoneid="5659480"></ins>
-        <script>(AdProvider = window.AdProvider || []).push({"serve": {}});<\/script>
-      `;
-    } else {
-      adBlock.innerHTML = `
-        <script async type="application/javascript" src="https://a.pemsrv.com/ad-provider.js"></script>
-        <ins class="eas6a97888e35" data-zoneid="5659482"></ins>
-        <script>(AdProvider = window.AdProvider || []).push({"serve": {}});<\/script>
-      `;
-    }
+    var adScriptPush = document.createElement('script');
+    adScriptPush.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
 
-    // Werbe-Trigger beim Klick auf Link
-    linkEl.addEventListener('click', function(e) {
-      if (!target) return;
-      // Das Interstitial wird durch den Ad-Tag selbst ausgelöst, daher braucht es kein JS-Redirect!
-      // User muss nach der Werbung ggf. nochmal klicken, das ist so gewollt
-    });
-  </script>
+    document.body.appendChild(adScript);
+    document.body.appendChild(adIns);
+    document.body.appendChild(adScriptPush);
+
+    // KEINE automatische Weiterleitung!
+    // Nach der Ad kann der User selbst den Link klicken.
+  }
+</script>
+
 </body>
 </html>
