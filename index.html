@@ -6,35 +6,68 @@
   <title>Join HentaiWorld! (18+)</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
-      background-size: cover;
-      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
       height: 100%;
+      font-family: Arial, sans-serif;
       overflow: hidden;
     }
-    .overlay {
+    .overlay, #redirectContent {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      background: #2f3136;
-      color: white;
-      padding: 40px;
+      box-shadow: 0 0 20px #0008;
       border-radius: 15px;
-      box-shadow: 0 0 20px #000;
-      text-align: center;
       width: 300px;
+      text-align: center;
+      padding: 40px 20px 30px 20px;
+      z-index: 10;
     }
-    .overlay h2 {
-      margin-top: 0;
-      font-size: 20px;
+    /* Startseiten BG */
+    #homeContent {
+      background: #2f3136dd;
     }
-    .overlay .stats {
+    body.home {
+      background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    /* Landingpage BG (neutral/generic adult-styled pattern) */
+    body.redirect {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+    #redirectContent {
+      background: #fff9f8cc;
+      color: #222;
+      border-radius: 13px;
+      padding: 34px 18px 22px 18px;
+      width: 340px;
+      max-width: 95vw;
+    }
+    #redirectContent h2 {
+      color: #b01226;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    #redirectContent .desc {
       font-size: 14px;
-      color: #b9bbbe;
-      margin: 10px 0;
+      color: #8a8a8a;
+      margin-bottom: 10px;
+    }
+    #linkContainer a {
+      display: inline-block;
+      background: #fbeee0;
+      border-radius: 7px;
+      color: #b01226;
+      font-weight: bold;
+      padding: 9px 14px;
+      font-size: 15px;
+      margin: 15px 0 10px 0;
+      text-decoration: underline;
+      word-break: break-all;
+      transition: background 0.2s;
+    }
+    #linkContainer a:hover {
+      background: #ffe4cf;
     }
     .btn {
       background-color: #5865f2;
@@ -51,35 +84,14 @@
     .btn:hover {
       background-color: #4752c4;
     }
-    #redirectContent {
-      display: none;
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      color: #222;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #0005;
-      width: 340px;
-      max-width: 95vw;
-      text-align: center;
-      padding: 30px 20px 20px 20px;
-      z-index: 100;
+    .overlay h2 {
+      margin-top: 0;
+      font-size: 20px;
     }
-    #redirectContent h2 {
-      margin: 0 0 12px 0;
-      font-size: 18px;
-      color: #222;
-    }
-    #redirectContent a {
-      word-break: break-all;
-      color: #5865f2;
-      font-weight: bold;
-    }
-    #timer {
-      font-size: 15px;
-      margin: 22px 0 0 0;
-      color: #2f3136;
+    .overlay .stats {
+      font-size: 14px;
+      color: #b9bbbe;
+      margin: 10px 0;
     }
     footer {
       position: absolute;
@@ -96,7 +108,7 @@
     }
   </style>
 </head>
-<body>
+<body class="home">
 
 <!-- Startseiten-Inhalt -->
 <div class="overlay" id="homeContent">
@@ -107,10 +119,12 @@
 </div>
 
 <!-- Weiterleitungs-Landingpage (initial ausgeblendet) -->
-<div id="redirectContent">
+<div id="redirectContent" style="display:none;">
   <h2>Link for the leak:</h2>
-  <p id="linkContainer"></p>
-  <p id="timer">You will be redirected in <span id="countdown">5</span> seconds…</p>
+  <div class="desc">Click the link below to access the leak.<br>
+  After clicking anywhere on this page, you will see a short ad.<br>
+  After closing the ad, click the link again if needed.</div>
+  <div id="linkContainer"></div>
 </div>
 
 <footer>
@@ -130,7 +144,8 @@
   var target = params.get('u');
 
   if (target) {
-    // Show landingpage, hide startseite
+    // Switch to redirect mode
+    document.body.className = 'redirect';
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
 
@@ -142,21 +157,7 @@
     linkElement.target = '_blank';
     document.getElementById('linkContainer').appendChild(linkElement);
 
-    // 5-Sekunden-Timer für automatische Weiterleitung
-    var countdownEl = document.getElementById('countdown');
-    var seconds = 5;
-    countdownEl.textContent = seconds;
-    var countdownInterval = setInterval(function() {
-      seconds--;
-      if (seconds <= 0) {
-        clearInterval(countdownInterval);
-        window.location.href = target;
-      } else {
-        countdownEl.textContent = seconds;
-      }
-    }, 1000);
-
-    // Interstitial-Ad einbinden (unabhängig vom Timer)
+    // Interstitial-Ad einbinden (wird durch Klick auf die Seite ausgelöst)
     var adScript = document.createElement('script');
     adScript.async = true;
     adScript.type = 'application/javascript';
@@ -174,13 +175,12 @@
     var adScriptPush = document.createElement('script');
     adScriptPush.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
 
-    // Reihenfolge wichtig!
     document.body.appendChild(adScript);
     document.body.appendChild(adIns);
     document.body.appendChild(adScriptPush);
 
-    // Ad wird durch Klick getriggert (wie in ExoClick eingestellt)
-    // Nach 5s erfolgt immer die automatische Weiterleitung!
+    // KEINE automatische Weiterleitung!
+    // Nach der Ad kann der User selbst den Link klicken.
   }
 </script>
 
