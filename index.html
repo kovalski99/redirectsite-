@@ -16,8 +16,8 @@
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       box-shadow: 0 0 20px #0008;
-      border-radius: 15px;
-      width: 300px;
+      border-radius: 18px;
+      width: 320px;
       text-align: center;
       padding: 40px 20px 30px 20px;
       z-index: 10;
@@ -33,41 +33,51 @@
     /* Landingpage BG (sanfter pink-lila-rot Farbverlauf) */
     body.redirect {
       background: linear-gradient(135deg, #f9a8ea 0%, #b093fb 50%, #f5576c 100%);
-      /* Du kannst ggf. die Farben noch feiner anpassen */
     }
+    /* Neues Design für das Weiterleitungsfeld */
     #redirectContent {
-      background: #fff9f8cc;
-      color: #222;
-      border-radius: 13px;
-      padding: 34px 18px 22px 18px;
+      background: linear-gradient(120deg, #b36fd7ee 0%, #ffb0cbcc 100%);
+      color: #f8f8ff;
+      border-radius: 18px;
+      padding: 36px 18px 22px 18px;
       width: 340px;
       max-width: 95vw;
+      box-shadow: 0 6px 36px #a67dcc44;
     }
     #redirectContent h2 {
-      color: #b01226;
-      font-size: 18px;
+      color: #fff;
+      background: linear-gradient(90deg, #ed63f6 0%, #ff71b0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 22px;
       margin-bottom: 15px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 12px #7c177155;
     }
     #redirectContent .desc {
-      font-size: 14px;
-      color: #8a8a8a;
-      margin-bottom: 10px;
+      font-size: 15px;
+      color: #faf4fa;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 10px #7a186255;
     }
     #linkContainer a {
       display: inline-block;
-      background: #fbeee0;
-      border-radius: 7px;
-      color: #b01226;
+      background: linear-gradient(90deg, #fff1fb 0%, #f9c5e6 100%);
+      border-radius: 8px;
+      color: #b12b90;
       font-weight: bold;
-      padding: 9px 14px;
-      font-size: 15px;
-      margin: 15px 0 10px 0;
+      padding: 11px 18px;
+      font-size: 16px;
+      margin: 18px 0 10px 0;
       text-decoration: underline;
       word-break: break-all;
-      transition: background 0.2s;
+      transition: background 0.18s, color 0.18s;
+      box-shadow: 0 2px 10px #ed63f644;
     }
     #linkContainer a:hover {
-      background: #ffe4cf;
+      background: linear-gradient(90deg, #f9c5e6 0%, #fff1fb 100%);
+      color: #701964;
     }
     .btn {
       background-color: #5865f2;
@@ -105,12 +115,13 @@
     }
     @media (max-width:400px) {
       .overlay, #redirectContent { width:95vw; min-width:0; padding:18px 2vw 16px 2vw; }
+      #redirectContent { font-size:14px; }
     }
   </style>
 </head>
 <body class="home">
 
-<!-- Startseiten-Inhalt -->
+<!-- Startseite -->
 <div class="overlay" id="homeContent">
   <img src="https://i.ibb.co/CRVBsc0/IMG-2682.jpg" alt="Logo" width="60" />
   <h2>You've been invited to join<br><strong>HentaiWorld! (18+)</strong></h2>
@@ -118,12 +129,11 @@
   <a class="btn" href="https://discord.com/invite/KTNu77SR" target="_blank">Accept Invite</a>
 </div>
 
-<!-- Weiterleitungs-Landingpage (initial ausgeblendet) -->
+<!-- Weiterleitungsseite -->
 <div id="redirectContent" style="display:none;">
   <h2>Link for the leak:</h2>
   <div class="desc">Click the link below to access the leak.<br>
-  After clicking anywhere on this page, you will see a short ad.<br>
-  After closing the ad, click the link again if needed.</div>
+  </div>
   <div id="linkContainer"></div>
 </div>
 
