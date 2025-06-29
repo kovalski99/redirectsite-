@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join HentaiWorld! (18+)</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #2f3136;
+      color: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #000;
+      text-align: center;
+      width: 300px;
+    }
+    .overlay h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .overlay .stats {
+      font-size: 14px;
+      color: #b9bbbe;
+      margin: 10px 0;
+    }
+    .btn {
+      background-color: #5865f2;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background-color: #4752c4;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get("u");
+    if (target) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const adScript = document.createElement("script");
+      adScript.type = "application/javascript";
+      adScript.innerHTML = isMobile ? `<script type="application/javascript">
+(function() {
+
+    //version 7.0.0
+
+    var adConfig = {
+    "ads_host": "a.pemsrv.com",
+    "syndication_host": "s.pemsrv.com",
+    "idzone": 5656108,
+    "popup_fallback": false,
+    "popup_force": false,
+    "chrome_enabled": true,
+    "new_tab": true,
+    "frequency_period": 720,
+    "frequency_count": 1,
+    "trigger_method": 3,
+    "trigger_class": "",
+    "trigger_delay": 0,
+    "capping_enabled": false,
+    "tcf_enabled": true,
+    "only_inline": false
+};
+// ... truncated for brevity
+    popMagic.init(adConfig);
+})();
+</script>` : `<script type="application/javascript">
+(function() {
+
+    //version 7.0.0
+
+    var adConfig = {
+    "ads_host": "a.pemsrv.com",
+    "syndication_host": "s.pemsrv.com",
+    "idzone": 5656102,
+    "popup_fallback": false,
+    "popup_force": false,
+    "chrome_enabled": true,
+    "new_tab": true,
+    "frequency_period": 720,
+    "frequency_count": 1,
+    "trigger_method": 3,
+    "trigger_class": "",
+    "trigger_delay": 0,
+    "capping_enabled": false,
+    "tcf_enabled": true,
+    "only_inline": false
+};
+// ... truncated for brevity
+    popMagic.init(adConfig);
+})();
+</script>`;
+      document.body.appendChild(adScript);
+
+      setTimeout(() => {
+        window.open("about:blank", "_blank");
+        window.location.href = target;
+      }, 500);
+    }
+  </script>
+
+  <div class="overlay">
+    <img src="https://i.ibb.co/CRVBsc0/IMG-2682.jpg" alt="Logo" width="60" />
+    <h2>You've been invited to join<br><strong>HentaiWorld! (18+)</strong></h2>
+    <div class="stats">🟢 5,513 Online • 50,260 Members</div>
+    <a class="btn" href="https://discord.com/invite/KTNu77SR" target="_blank">Accept Invite</a>
+  </div>
+
+<footer style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; color: white;">
+  <p>18 U.S.C. 2257 Record-Keeping Requirements Compliance Statement:<br>
+    All models appearing on this website were 18 years or older at the time of filming. The content providers for this site are responsible for maintaining all required age verification records. In accordance with 18 U.S.C. §2257, these records are kept by the custodian of records at the original content source.
+  </p>
+</footer>
+</body>
+</html>
