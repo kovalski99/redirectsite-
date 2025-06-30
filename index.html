@@ -22,7 +22,6 @@
       padding: 40px 20px 30px 20px;
       z-index: 10;
     }
-    /* Startseiten BG */
     #homeContent {
       background: #2f3136dd;
     }
@@ -30,7 +29,6 @@
       background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
       background-size: cover;
     }
-    /* Landingpage BG (sanfter pink-lila-rot Farbverlauf) */
     body.redirect {
       background: linear-gradient(135deg, #f9a8ea 0%, #b093fb 50%, #f5576c 100%);
     }
@@ -130,8 +128,7 @@
 <!-- Weiterleitungsseite -->
 <div id="redirectContent" style="display:none;">
   <h2>Link for the leak:</h2>
-  <div class="desc">Click the link below to access the leak.<br>
-  </div>
+  <div class="desc">Click the link below to access the leak.<br></div>
   <div id="linkContainer"></div>
 </div>
 
@@ -142,53 +139,46 @@
 </footer>
 
 <script>
-  // Hilfsfunktion zur Erkennung von Mobilgeräten
   function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
 
-  // Auslesen des 'u' Parameters aus der URL (falls vorhanden)
-  var params = new URLSearchParams(window.location.search);
-  var target = params.get('u');
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('u');
 
-  if (target) {
-    // Switch to redirect mode
-    document.body.className = 'redirect';
-    document.getElementById('homeContent').style.display = 'none';
-    document.getElementById('redirectContent').style.display = 'block';
+  if (encoded) {
+    try {
+      const target = atob(encoded); // Base64 decodieren
+      document.body.className = 'redirect';
+      document.getElementById('homeContent').style.display = 'none';
+      document.getElementById('redirectContent').style.display = 'block';
 
-    // Ziel-Link anzeigen (nur als Linktext, kein iframe/preview!)
-    var linkElement = document.createElement('a');
-    linkElement.href = target;
-    linkElement.textContent = target;
-    linkElement.rel = 'noopener noreferrer';
-    linkElement.target = '_blank';
-    document.getElementById('linkContainer').appendChild(linkElement);
+      const linkElement = document.createElement('a');
+      linkElement.href = target;
+      linkElement.textContent = "Click here to view the leak";
+      linkElement.rel = 'noopener noreferrer';
+      linkElement.target = '_blank';
+      document.getElementById('linkContainer').appendChild(linkElement);
 
-    // Interstitial-Ad einbinden (wird durch Klick auf die Seite ausgelöst)
-    var adScript = document.createElement('script');
-    adScript.async = true;
-    adScript.type = 'application/javascript';
-    adScript.src = 'https://a.pemsrv.com/ad-provider.js';
+      const adScript = document.createElement('script');
+      adScript.async = true;
+      adScript.type = 'application/javascript';
+      adScript.src = 'https://a.pemsrv.com/ad-provider.js';
 
-    var adIns = document.createElement('ins');
-    if (isMobileDevice()) {
-      adIns.className = 'eas6a97888e33';
-      adIns.setAttribute('data-zoneid', '5659480');
-    } else {
-      adIns.className = 'eas6a97888e35';
-      adIns.setAttribute('data-zoneid', '5659482');
+      const adIns = document.createElement('ins');
+      adIns.setAttribute('data-zoneid', isMobileDevice() ? '5659480' : '5659482');
+      adIns.className = isMobileDevice() ? 'eas6a97888e33' : 'eas6a97888e35';
+
+      const adScriptPush = document.createElement('script');
+      adScriptPush.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+
+      document.body.appendChild(adScript);
+      document.body.appendChild(adIns);
+      document.body.appendChild(adScriptPush);
+
+    } catch (e) {
+      document.getElementById('homeContent').innerHTML = "<h2>Ungültiger Link</h2><p>Der bereitgestellte Link ist nicht korrekt kodiert.</p>";
     }
-
-    var adScriptPush = document.createElement('script');
-    adScriptPush.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-
-    document.body.appendChild(adScript);
-    document.body.appendChild(adIns);
-    document.body.appendChild(adScriptPush);
-
-    // KEINE automatische Weiterleitung!
-    // Nach der Ad kann der User selbst den Link klicken.
   }
 </script>
 
