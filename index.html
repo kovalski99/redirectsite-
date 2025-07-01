@@ -153,19 +153,16 @@
 </footer>
 
 <script>
-  function click(target) {
-	const script = document.createElement('script');
-    script.src = '//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js';
-    script.type = 'text/javascript';
-	
-	script.onload = function () {
-      window.location.href = target;
-    };
-	
-    document.body.appendChild(script);
-  }
-
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
+  
+  function click(target) {
+	setTimeout(function() {
+      window.open(target, '_blank');
+    }, 300);
+	
+	window.location.href = DIRECT_LINK_URL;
+  }
+  
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
   if (urlParam) {
