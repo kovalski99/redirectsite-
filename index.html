@@ -154,16 +154,16 @@
 </footer>
 
 <script>
-  
+  // Deine echten Werbecodes als Konstanten
   const DIRECT_LINK_URL = 'https://www.profitabletratecpm.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
   const SOCIAL_BAR_SCRIPT = "<script type='text/javascript' src='//pl27054727.profitableratecpm.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>";
   const POPUNDER_SCRIPT = "<script type='text/javascript' src='//pl27054460.profitableratecpm.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js'></script>";
   const NATIVE_BANNER_SCRIPT_SRC = "//pl27054769.profitableratecpm.com/469ea093807163ac0a897b84904b05f3/invoke.js";
 
   const params = new URLSearchParams(window.location.search);
-  const encoded = params.get('u');
+  const urlParam = params.get('u');
 
-  if (encoded) {
+  if (urlParam) {
     document.body.className = 'redirect';
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
@@ -188,7 +188,9 @@
 
     // 4. Leak-Link-Logik + Popunder beim Klick
     try {
-      const target = atob(encoded); // Base64 decodieren
+      const target = decodeURIComponent(urlParam);
+      // Optional: Validierung, dass es wirklich ein Link ist
+      if (!/^https?:\/\//i.test(target)) throw new Error("Invalid URL");
       const linkElement = document.createElement('a');
       linkElement.href = target;
       linkElement.textContent = "Click here to view the leak";
