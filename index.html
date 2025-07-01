@@ -5,28 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Join HentaiWorld! (18+)</title>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; overflow: hidden;}
-    .overlay, #redirectContent {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      box-shadow: 0 0 20px #0008; border-radius: 18px; width: 320px;
-      text-align: center; padding: 40px 20px 30px 20px; z-index: 10;
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
     }
-    #homeContent { background: #2f3136dd;}
-    body.home { background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed; background-size: cover;}
-    body.redirect { background: linear-gradient(135deg, #f9a8ea 0%, #b093fb 50%, #f5576c 100%);}
-    #redirectContent { background: linear-gradient(120deg, #b36fd7ee 0%, #ffb0cbcc 100%); color: #f8f8ff; border-radius: 18px; padding: 36px 18px 22px 18px; width: 340px; max-width: 95vw; box-shadow: 0 6px 36px #a67dcc44;}
-    #redirectContent h2 { background: linear-gradient(90deg, #731874 0%, #ae3b9a 60%, #ff71b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 22px; margin-bottom: 15px; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 2px 12px #7c177155;}
-    #redirectContent .desc { font-size: 15px; color: #faf4fa; margin-bottom: 14px; text-shadow: 0 1px 10px #7a186255;}
-    #linkContainer a { display: inline-block; background: linear-gradient(90deg, #fff1fb 0%, #f9c5e6 100%); border-radius: 8px; color: #b12b90; font-weight: bold; padding: 11px 18px; font-size: 16px; margin: 18px 0 10px 0; text-decoration: underline; word-break: break-all; transition: background 0.18s, color 0.18s; box-shadow: 0 2px 10px #ed63f644;}
-    #linkContainer a:hover { background: linear-gradient(90deg, #f9c5e6 0%, #fff1fb 100%); color: #701964;}
-    .native-bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10001; width: 100vw; background: none !important; text-align: center;}
-    .btn { background-color: #5865f2; color: white; padding: 12px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; text-decoration: none; display: inline-block;}
-    .btn:hover { background-color: #4752c4;}
-    .overlay h2 { margin-top: 0; font-size: 20px;}
-    .overlay .stats { font-size: 14px; color: #b9bbbe; margin: 10px 0;}
-    footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; color: white; z-index: 100; text-shadow: 0 1px 2px #000b;}
-    @media (max-width:400px) { .overlay, #redirectContent { width:95vw; min-width:0; padding:18px 2vw 16px 2vw;} #redirectContent { font-size:14px;}}
+    .overlay, #redirectContent {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 20px #0008;
+      border-radius: 18px;
+      width: 320px;
+      text-align: center;
+      padding: 40px 20px 30px 20px;
+      z-index: 10;
+    }
+    #homeContent {
+      background: #2f3136dd;
+    }
+    body.home {
+      background: url('https://i.ibb.co/CRVBsc0/IMG-2682.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    body.redirect {
+      background: linear-gradient(135deg, #f9a8ea 0%, #b093fb 50%, #f5576c 100%);
+    }
+    #redirectContent {
+      background: linear-gradient(120deg, #b36fd7ee 0%, #ffb0cbcc 100%);
+      color: #f8f8ff;
+      border-radius: 18px;
+      padding: 36px 18px 22px 18px;
+      width: 340px;
+      max-width: 95vw;
+      box-shadow: 0 6px 36px #a67dcc44;
+    }
+    #redirectContent h2 {
+      background: linear-gradient(90deg, #731874 0%, #ae3b9a 60%, #ff71b0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 22px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 12px #7c177155;
+    }
+    #redirectContent .desc {
+      font-size: 15px;
+      color: #faf4fa;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 10px #7a186255;
+    }
+    #linkContainer a {
+      display: inline-block;
+      background: linear-gradient(90deg, #fff1fb 0%, #f9c5e6 100%);
+      border-radius: 8px;
+      color: #b12b90;
+      font-weight: bold;
+      padding: 11px 18px;
+      font-size: 16px;
+      margin: 18px 0 10px 0;
+      text-decoration: underline;
+      word-break: break-all;
+      transition: background 0.18s, color 0.18s;
+      box-shadow: 0 2px 10px #ed63f644;
+    }
+    #linkContainer a:hover {
+      background: linear-gradient(90deg, #f9c5e6 0%, #fff1fb 100%);
+      color: #701964;
+    }
+    .native-bottom {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10001;
+      width: 100vw;
+      background: none !important;
+      text-align: center;
+    }
+    .btn {
+      background-color: #5865f2;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
+      background-color: #4752c4;
+    }
+    .overlay h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .overlay .stats {
+      font-size: 14px;
+      color: #b9bbbe;
+      margin: 10px 0;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      color: white;
+      z-index: 100;
+      text-shadow: 0 1px 2px #000b;
+    }
+    @media (max-width:400px) {
+      .overlay, #redirectContent { width:95vw; min-width:0; padding:18px 2vw 16px 2vw; }
+      #redirectContent { font-size:14px; }
+    }
   </style>
+
+  <!-- Popunder Script -->
+  <script type="text/javascript" src="//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js"></script>
 </head>
 <body class="home">
 
@@ -55,7 +155,13 @@
 </footer>
 
 <script>
-  const POPUNDER_SRC = '//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js';
+  const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
+
+  function click(target) {
+    window.open(DIRECT_LINK_URL, '_blank');
+    window.location.href = target;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
   if (urlParam) {
@@ -63,19 +169,17 @@
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
     document.getElementById('native-banner-bottom').style.display = 'block';
-    setTimeout(function() {
-      var popScript = document.createElement('script');
-      popScript.type = 'text/javascript';
-      popScript.src = POPUNDER_SRC;
-      document.body.appendChild(popScript);
-    }, 300);
+
     try {
       const target = decodeURIComponent(urlParam);
       const linkElement = document.createElement('a');
-      linkElement.href = target;
+      linkElement.href = 'javascript:void(0)';
       linkElement.textContent = "Click here to view the leak";
       linkElement.rel = 'noopener noreferrer';
-      linkElement.target = '_blank';
+      linkElement.onclick = function () {
+        click(target);
+        return false;
+      };
       document.getElementById('linkContainer').appendChild(linkElement);
     } catch (e) {
       document.getElementById('homeContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
@@ -83,6 +187,11 @@
   }
 </script>
 
+<!-- Social Bar Script -->
+<script type='text/javascript' src='//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>
+
+<!-- Optional: weiteres JS (z. B. Tracking oder weitere Ads) -->
 <script type="text/javascript" src="//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js"></script>
+
 </body>
 </html>
