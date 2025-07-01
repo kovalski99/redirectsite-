@@ -156,8 +156,8 @@
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
   
   function click(target) {
-	window.open(target, '_blank');
-	window.location.href = DIRECT_LINK_URL;
+	window.open(DIRECT_LINK_URL, '_blank');
+	window.location.href = target
   }
   
   const params = new URLSearchParams(window.location.search);
