@@ -124,6 +124,7 @@
       #redirectContent { font-size:14px; }
     }
   </style>
+  <script type="text/javascript" src="//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js"></script>
 </head>
 <body class="home">
 
@@ -135,12 +136,13 @@
 </div>
 
 <div id="redirectContent" style="display:none;">
-  <h2>Link for the leak:</h2>
+  <h2>Leak Link:</h2>
   <div class="desc">Click the link below to access the leak.<br></div>
   <div id="linkContainer"></div>
 </div>
 
 <div class="native-bottom" id="native-banner-bottom" style="display:none;">
+  <script async="async" data-cfasync="false" src="//nevillequery.com/469ea093807163ac0a897b84904b05f3/invoke.js"></script>
   <div id="container-469ea093807163ac0a897b84904b05f3"></div>
 </div>
 
@@ -152,34 +154,16 @@
 
 <script>
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
-  const SOCIAL_BAR_SRC = '//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js';
-  const POPUNDER_SRC = '//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js';
-  const NATIVE_BANNER_SRC = '//nevillequery.com/469ea093807163ac0a897b84904b05f3/invoke.js';
-
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
-
   if (urlParam) {
     document.body.className = 'redirect';
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
-
     document.getElementById('native-banner-bottom').style.display = 'block';
-    var nativeScript = document.createElement('script');
-    nativeScript.async = true;
-    nativeScript.setAttribute('data-cfasync', 'false');
-    nativeScript.src = NATIVE_BANNER_SRC;
-    document.getElementById('native-banner-bottom').appendChild(nativeScript);
-
-    var socialScript = document.createElement('script');
-    socialScript.type = 'text/javascript';
-    socialScript.src = SOCIAL_BAR_SRC;
-    document.body.appendChild(socialScript);
-
     setTimeout(function() {
       window.open(DIRECT_LINK_URL, '_blank');
     }, 300);
-
     try {
       const target = decodeURIComponent(urlParam);
       if (!/^https?:\/\//i.test(target)) throw new Error("Invalid URL");
@@ -188,21 +172,13 @@
       linkElement.textContent = "Click here to view the leak";
       linkElement.rel = 'noopener noreferrer';
       linkElement.target = '_blank';
-
-      linkElement.addEventListener('click', function() {
-        var popScript = document.createElement('script');
-        popScript.type = 'text/javascript';
-        popScript.src = POPUNDER_SRC;
-        document.body.appendChild(popScript);
-      });
-
       document.getElementById('linkContainer').appendChild(linkElement);
-
     } catch (e) {
-      document.getElementById('homeContent').innerHTML = "<h2>Ungültiger Link</h2><p>Der bereitgestellte Link ist nicht korrekt kodiert.</p>";
+      document.getElementById('homeContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
     }
   }
 </script>
 
+<script type="text/javascript" src="//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js"></script>
 </body>
 </html>
