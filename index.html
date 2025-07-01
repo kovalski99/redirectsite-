@@ -153,6 +153,18 @@
 </footer>
 
 <script>
+  function click(target) {
+	const script = document.createElement('script');
+    script.src = '//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js';
+    script.type = 'text/javascript';
+	
+	script.onload = function () {
+      window.location.href = target;
+    };
+	
+    document.body.appendChild(script);
+  }
+
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
@@ -166,12 +178,11 @@
     }, 300);
     try {
       const target = decodeURIComponent(urlParam);
-      if (!/^https?:\/\//i.test(target)) throw new Error("Invalid URL");
       const linkElement = document.createElement('a');
-      linkElement.href = target;
+      linkElement.href = 'javascript:void(0)';
       linkElement.textContent = "Click here to view the leak";
       linkElement.rel = 'noopener noreferrer';
-      linkElement.target = '_blank';
+      linkElement.onclick = 'click(' + target + '); return false;';
       document.getElementById('linkContainer').appendChild(linkElement);
     } catch (e) {
       document.getElementById('homeContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
