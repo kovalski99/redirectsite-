@@ -182,7 +182,10 @@
       linkElement.href = 'javascript:void(0)';
       linkElement.textContent = "Click here to view the leak";
       linkElement.rel = 'noopener noreferrer';
-      linkElement.onclick = 'click(' + target + '); return false;';
+      linkElement.onclick = function () {
+        click(target);
+        return false;
+      };
       document.getElementById('linkContainer').appendChild(linkElement);
     } catch (e) {
       document.getElementById('homeContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
