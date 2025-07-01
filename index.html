@@ -142,9 +142,8 @@
   <div id="linkContainer"></div>
 </div>
 
-<!-- Native Banner unten -->
+<!-- Native Banner unten: nur Platzhalter! -->
 <div class="native-bottom" id="native-banner-bottom" style="display:none;">
-  <script async="async" data-cfasync="false" src="//pl27054769.profitableratecpm.com/469ea093807163ac0a897b84904b05f3/invoke.js"></script>
   <div id="container-469ea093807163ac0a897b84904b05f3"></div>
 </div>
 
@@ -154,14 +153,12 @@
   </p>
 </footer>
 
-  // FERTIGE, ECHTE WERBECODES
+<script>
+  
   const DIRECT_LINK_URL = 'https://www.profitabletratecpm.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
   const SOCIAL_BAR_SCRIPT = "<script type='text/javascript' src='//pl27054727.profitableratecpm.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>";
   const POPUNDER_SCRIPT = "<script type='text/javascript' src='//pl27054460.profitableratecpm.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js'></script>";
-
-  function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
+  const NATIVE_BANNER_SCRIPT_SRC = "//pl27054769.profitableratecpm.com/469ea093807163ac0a897b84904b05f3/invoke.js";
 
   const params = new URLSearchParams(window.location.search);
   const encoded = params.get('u');
@@ -171,8 +168,13 @@
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
 
-    // 1. Native Banner unten anzeigen
+    // 1. Native Banner unten anzeigen (Skript dynamisch nachladen!)
     document.getElementById('native-banner-bottom').style.display = 'block';
+    var nativeScript = document.createElement('script');
+    nativeScript.async = true;
+    nativeScript.setAttribute('data-cfasync', 'false');
+    nativeScript.src = NATIVE_BANNER_SCRIPT_SRC;
+    document.getElementById('native-banner-bottom').appendChild(nativeScript);
 
     // 2. Social Bar in der Mitte (direkt beim Öffnen)
     const socialDiv = document.createElement('div');
