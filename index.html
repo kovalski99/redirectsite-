@@ -176,7 +176,7 @@
     document.getElementById('redirectContent').innerHTML = `
       <h2>Leak Link:</h2>
       <div class="desc" style="color:#ffb4c2">
-        <span id="scanText">Scanning for VPN, Proxy, AdBlock, Popups...</span>
+        <span id="scanText">Scanning for VPN, Proxy, Hosting, AdBlock, Popups...</span>
       </div>
       <div id="linkContainer">
         <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
@@ -215,7 +215,7 @@
       document.getElementById('redirectContent').innerHTML = `
         <h2>Access Denied</h2>
         <div class="desc" style="color:#ffb4c2">
-          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies and allow Popups to view this page."}
+          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies, Hosting IPs and allow Popups to view this page."}
         </div>
         <div id="linkContainer">
           <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
@@ -228,56 +228,104 @@
   if (urlParam) showScanningBlock();
 
   /**
-   * Run all checks: AdBlock, VPN/Proxy, Popup blocker
-   * If any fails, keep link locked and show reason
-   * If all pass, unlock link
+   * Helper function: detect if a provider string is a known hosting/datacenter (Amazon, OVH, etc.)
+   */
+  function isHostingProvider(asn, org, isp) {
+    const providers = [
+      'Amazon', 'Google', 'Microsoft', 'OVH', 'Hetzner', 'DigitalOcean',
+      'Contabo', 'Linode', 'Leaseweb', 'Choopa', 'Online S.A.S.', 'Alibaba',
+      'Vultr', 'Scaleway', 'Hostinger', 'IONOS', 'InterNetX', 'Kimsufi', 'Hivelocity'
+    ];
+    let str = (asn || '') + ' ' + (org || '') + ' ' + (isp || '');
+    str = str.toLowerCase();
+    return providers.some(p => str.includes(p.toLowerCase()));
+  }
+
+  /**
+   * Run all checks: AdBlock, VPN/Proxy, Hosting, Popup blocker.
+   * If any fails, keep link locked and show reason. If all pass, unlock link.
+   * Uses multiple free APIs for better detection!
    */
   async function checkConditions() {
     if (!urlParam) return;
 
     let blocked = false;
-    let reason = "";
+    let reasons = [];
 
-    // Adblock check
+    // --- Adblock check ---
     const ad = document.createElement('div');
     ad.className = 'adsbox';
     ad.style.height = '1px';
     document.body.appendChild(ad);
     if (ad.offsetHeight === 0) {
       blocked = true;
-      reason = "AdBlock detected. Please disable AdBlock.";
+      reasons.push("AdBlock detected. Please disable AdBlock.");
     }
     ad.remove();
 
-    // VPN/Proxy check using ipapi
+    // --- ipapi.co VPN/Proxy/Tor check ---
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
       if (data.security && (data.security.proxy || data.security.vpn || data.security.tor)) {
         blocked = true;
-        reason = "VPN/Proxy detected. Please turn off your VPN or Proxy.";
+        reasons.push("VPN/Proxy/Tor detected (ipapi.co). Please turn off your VPN or Proxy.");
       }
-    } catch (e) {
-      blocked = true;
-      reason = "Could not verify your connection. Please try again.";
-    }
+      if (isHostingProvider(data.asn, data.org, data.org)) {
+        blocked = true;
+        reasons.push("Hosting or datacenter IP detected (ipapi.co). Please use a residential connection.");
+      }
+    } catch (e) {}
 
-    // Popup blocker check
+    // --- ip-api.com VPN/Proxy check ---
+    try {
+      const res = await fetch('http://ip-api.com/json/?fields=hosting,proxy,org,as,isp');
+      const data = await res.json();
+      if (data.proxy === true) {
+        blocked = true;
+        reasons.push("Proxy detected (ip-api.com).");
+      }
+      if (data.hosting === true || isHostingProvider(data.as, data.org, data.isp)) {
+        blocked = true;
+        reasons.push("Hosting/datacenter IP detected (ip-api.com).");
+      }
+    } catch (e) {}
+
+    // --- ipwho.is VPN/Proxy/Hosting check ---
+    try {
+      const res = await fetch('https://ipwho.is/');
+      const data = await res.json();
+      if (data.connection && (data.connection.proxy || data.connection.tor)) {
+        blocked = true;
+        reasons.push("Proxy/Tor detected (ipwho.is).");
+      }
+      if (data.connection && data.connection.type === "hosting") {
+        blocked = true;
+        reasons.push("Hosting IP detected (ipwho.is).");
+      }
+      if (isHostingProvider(data.connection && data.connection.asn, data.connection && data.connection.org, data.connection && data.connection.isp)) {
+        blocked = true;
+        reasons.push("Hosting/datacenter IP detected (ipwho.is).");
+      }
+    } catch (e) {}
+
+    // --- Popup blocker check ---
     let popupTest = window.open('', '', 'width=100,height=100');
     if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
       blocked = true;
-      reason = "Popup blocker detected. Please allow popups for this page.";
+      reasons.push("Popup blocker detected. Please allow popups for this page.");
     } else {
       popupTest.close();
     }
 
+    // --- If any block, show all reasons ---
     setTimeout(() => {
       if (blocked) {
-        setLinkState(false, reason);
+        setLinkState(false, reasons.join('<br>'));
       } else {
         setLinkState(true, "");
       }
-    }, 300); // Small delay for a smooth transition
+    }, 300);
   }
 
   // Run scan after page load
