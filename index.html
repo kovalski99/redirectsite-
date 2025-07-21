@@ -164,76 +164,128 @@
 
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
-  if (urlParam) {
+
+  /**
+   * Show scanning overlay (initial locked state)
+   */
+  function showScanningBlock() {
     document.body.className = 'redirect';
     document.getElementById('homeContent').style.display = 'none';
     document.getElementById('redirectContent').style.display = 'block';
     document.getElementById('native-banner-bottom').style.display = 'block';
+    document.getElementById('redirectContent').innerHTML = `
+      <h2>Leak Link:</h2>
+      <div class="desc" style="color:#ffb4c2">
+        <span id="scanText">Scanning for VPN, Proxy, AdBlock, Popups...</span>
+      </div>
+      <div id="linkContainer">
+        <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
+      </div>
+    `;
+  }
 
-    try {
-      const target = decodeURIComponent(urlParam);
-      const linkElement = document.createElement('a');
-      linkElement.href = 'javascript:void(0)';
-      linkElement.textContent = "Click here to view the leak";
-      linkElement.rel = 'noopener noreferrer';
-      linkElement.onclick = function () {
-        click(target);
-        return false;
-      };
-      document.getElementById('linkContainer').appendChild(linkElement);
-    } catch (e) {
-      document.getElementById('homeContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
+  /**
+   * Update link state: allowed = true shows real link, false shows locked message with reason
+   */
+  function setLinkState(allowed, reasonText) {
+    if (!urlParam) return;
+    if (allowed) {
+      // All checks passed, show the real link
+      try {
+        const target = decodeURIComponent(urlParam);
+        document.getElementById('redirectContent').innerHTML = `
+          <h2>Leak Link:</h2>
+          <div class="desc">Click the link below to access the leak.<br></div>
+          <div id="linkContainer"></div>
+        `;
+        const linkElement = document.createElement('a');
+        linkElement.href = 'javascript:void(0)';
+        linkElement.textContent = "Click here to view the leak";
+        linkElement.rel = 'noopener noreferrer';
+        linkElement.onclick = function () {
+          click(target);
+          return false;
+        };
+        document.getElementById('linkContainer').appendChild(linkElement);
+      } catch (e) {
+        document.getElementById('redirectContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
+      }
+    } else {
+      // Still blocked, show message and keep link locked
+      document.getElementById('redirectContent').innerHTML = `
+        <h2>Access Denied</h2>
+        <div class="desc" style="color:#ffb4c2">
+          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies and allow Popups to view this page."}
+        </div>
+        <div id="linkContainer">
+          <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
+        </div>
+      `;
     }
   }
-</script>
 
-<!-- Social Bar Script -->
-<script type='text/javascript' src='//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>
+  // If we have ?u= parameter, show scanning state immediately
+  if (urlParam) showScanningBlock();
 
-<!-- Blocker Detection Script -->
-<script>
+  /**
+   * Run all checks: AdBlock, VPN/Proxy, Popup blocker
+   * If any fails, keep link locked and show reason
+   * If all pass, unlock link
+   */
   async function checkConditions() {
+    if (!urlParam) return;
+
     let blocked = false;
+    let reason = "";
 
     // Adblock check
     const ad = document.createElement('div');
     ad.className = 'adsbox';
     ad.style.height = '1px';
     document.body.appendChild(ad);
-    if (ad.offsetHeight === 0) blocked = true;
+    if (ad.offsetHeight === 0) {
+      blocked = true;
+      reason = "AdBlock detected. Please disable AdBlock.";
+    }
     ad.remove();
 
-    // VPN/Proxy check via ipapi
+    // VPN/Proxy check using ipapi
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
       if (data.security && (data.security.proxy || data.security.vpn || data.security.tor)) {
         blocked = true;
+        reason = "VPN/Proxy detected. Please turn off your VPN or Proxy.";
       }
     } catch (e) {
-      blocked = true; // fallback block
+      blocked = true;
+      reason = "Could not verify your connection. Please try again.";
     }
 
     // Popup blocker check
     let popupTest = window.open('', '', 'width=100,height=100');
     if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
       blocked = true;
+      reason = "Popup blocker detected. Please allow popups for this page.";
     } else {
       popupTest.close();
     }
 
-    if (blocked) {
-      document.body.innerHTML = `
-        <div class="overlay" style="background:#1f1f1f;color:#fff;text-align:center;padding:40px;">
-          <h2>Access Denied</h2>
-          <p>Turn off all AdBlockers, VPNs, Proxies and allow Popups to view this page.</p>
-        </div>
-      `;
-    }
+    setTimeout(() => {
+      if (blocked) {
+        setLinkState(false, reason);
+      } else {
+        setLinkState(true, "");
+      }
+    }, 300); // Small delay for a smooth transition
   }
 
+  // Run scan after page load
   window.addEventListener('load', checkConditions);
 </script>
+
+<!-- Social Bar Script -->
+<script type='text/javascript' src='//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>
 
 </body>
 </html>
