@@ -165,9 +165,6 @@
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
 
-  /**
-   * Show scanning overlay (initial locked state)
-   */
   function showScanningBlock() {
     document.body.className = 'redirect';
     document.getElementById('homeContent').style.display = 'none';
@@ -176,7 +173,7 @@
     document.getElementById('redirectContent').innerHTML = `
       <h2>Leak Link:</h2>
       <div class="desc" style="color:#ffb4c2">
-        <span id="scanText">Scanning for VPN, Proxy, Hosting, AdBlock, Popups...</span>
+        <span id="scanText">Scanning for VPN, Proxy, Hosting, AdBlock, Popups, and suspicious browser...</span>
       </div>
       <div id="linkContainer">
         <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
@@ -184,13 +181,9 @@
     `;
   }
 
-  /**
-   * Update link state: allowed = true shows real link, false shows locked message with reason
-   */
   function setLinkState(allowed, reasonText) {
     if (!urlParam) return;
     if (allowed) {
-      // All checks passed, show the real link
       try {
         const target = decodeURIComponent(urlParam);
         document.getElementById('redirectContent').innerHTML = `
@@ -211,11 +204,10 @@
         document.getElementById('redirectContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
       }
     } else {
-      // Still blocked, show message and keep link locked
       document.getElementById('redirectContent').innerHTML = `
         <h2>Access Denied</h2>
         <div class="desc" style="color:#ffb4c2">
-          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies, Hosting IPs and allow Popups to view this page."}
+          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies, Hosting IPs, allow Popups and use a regular browser to view this page."}
         </div>
         <div id="linkContainer">
           <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
@@ -224,12 +216,8 @@
     }
   }
 
-  // If we have ?u= parameter, show scanning state immediately
   if (urlParam) showScanningBlock();
 
-  /**
-   * Helper function: detect if a provider string is a known hosting/datacenter (Amazon, OVH, etc.)
-   */
   function isHostingProvider(asn, org, isp) {
     const providers = [
       'Amazon', 'Google', 'Microsoft', 'OVH', 'Hetzner', 'DigitalOcean',
@@ -241,18 +229,68 @@
     return providers.some(p => str.includes(p.toLowerCase()));
   }
 
-  /**
-   * Run all checks: AdBlock, VPN/Proxy, Hosting, Popup blocker.
-   * If any fails, keep link locked and show reason. If all pass, unlock link.
-   * Uses multiple free APIs for better detection!
-   */
+  function suspiciousUserAgent() {
+    // Very basic: block TorBrowser or anything really "weird"
+    const ua = navigator.userAgent;
+    if (/TorBrowser|Iceweasel|GoBrowser|Lynx|PhantomJS|Headless/i.test(ua)) return true;
+    if (ua.length < 30) return true;
+    return false;
+  }
+
+  function suspiciousFingerprint(ipCountry) {
+    let reasons = [];
+    // 1. Timezone vs IP-Country mismatch
+    try {
+      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      if (ipCountry && tz) {
+        if (tz.match(/^Europe/) && !["DE","FR","NL","AT","CH","BE","PL","SE","FI","DK","IT","ES","NO","CZ","GR","IE","PT","SK","HU"].includes(ipCountry)) {
+          reasons.push("Timezone and IP country do not match.");
+        }
+      }
+    } catch(e){}
+
+    // 2. WebRTC disabled
+    if (!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection)) {
+      reasons.push("WebRTC disabled or not supported.");
+    }
+
+    // 3. Canvas/WebGL disabled
+    try {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) reasons.push("Canvas/WebGL disabled or blocked.");
+    } catch(e){ reasons.push("Canvas/WebGL disabled or blocked."); }
+
+    // 4. AudioContext fingerprint blocked
+    try {
+      const ctx = window.AudioContext || window.webkitAudioContext;
+      if (!ctx) reasons.push("AudioContext blocked.");
+    } catch(e){ reasons.push("AudioContext blocked."); }
+
+    // 5. Do Not Track
+    if (navigator.doNotTrack == "1" || window.doNotTrack == "1") {
+      reasons.push("Do Not Track is enabled.");
+    }
+
+    // 6. Suspicious User Agent
+    if (suspiciousUserAgent()) reasons.push("Suspicious or privacy-focused browser detected.");
+
+    // 7. Screen size/ratio (very small/very big = suspicious)
+    if (window.screen && (window.screen.width < 350 || window.screen.height < 350 || window.screen.width > 3000)) {
+      reasons.push("Unusual screen size or device.");
+    }
+
+    return reasons;
+  }
+
   async function checkConditions() {
     if (!urlParam) return;
 
     let blocked = false;
     let reasons = [];
+    let ipCountry = null;
 
-    // --- Adblock check ---
+    // Adblock check
     const ad = document.createElement('div');
     ad.className = 'adsbox';
     ad.style.height = '1px';
@@ -263,7 +301,7 @@
     }
     ad.remove();
 
-    // --- ipapi.co VPN/Proxy/Tor check ---
+    // ipapi.co VPN/Proxy/Tor + country for fingerprint
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
@@ -275,9 +313,10 @@
         blocked = true;
         reasons.push("Hosting or datacenter IP detected (ipapi.co). Please use a residential connection.");
       }
+      if (data.country) ipCountry = data.country;
     } catch (e) {}
 
-    // --- ip-api.com VPN/Proxy check ---
+    // ip-api.com
     try {
       const res = await fetch('http://ip-api.com/json/?fields=hosting,proxy,org,as,isp');
       const data = await res.json();
@@ -291,7 +330,7 @@
       }
     } catch (e) {}
 
-    // --- ipwho.is VPN/Proxy/Hosting check ---
+    // ipwho.is
     try {
       const res = await fetch('https://ipwho.is/');
       const data = await res.json();
@@ -309,7 +348,7 @@
       }
     } catch (e) {}
 
-    // --- Popup blocker check ---
+    // Popup blocker check
     let popupTest = window.open('', '', 'width=100,height=100');
     if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
       blocked = true;
@@ -318,7 +357,13 @@
       popupTest.close();
     }
 
-    // --- If any block, show all reasons ---
+    // Fingerprinting checks
+    let fpReasons = suspiciousFingerprint(ipCountry);
+    if (fpReasons.length > 0) {
+      blocked = true;
+      reasons.push(...fpReasons.map(r => "Suspicious browser: " + r));
+    }
+
     setTimeout(() => {
       if (blocked) {
         setLinkState(false, reasons.join('<br>'));
@@ -328,7 +373,6 @@
     }, 300);
   }
 
-  // Run scan after page load
   window.addEventListener('load', checkConditions);
 </script>
 
