@@ -87,7 +87,9 @@
       text-align: center;
       padding: 0;
       min-height: 0;
+      pointer-events: none;
     }
+    .native-bottom > * { pointer-events: auto; }
     .btn {
       background-color: #5865f2;
       color: white;
@@ -112,29 +114,18 @@
       color: #b9bbbe;
       margin: 10px 0;
     }
-    footer {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      color: white;
-      z-index: 100;
-      text-shadow: 0 1px 2px #000b;
-    }
-    /* MOBILE OPTIMIZED BANNER & CONTENT */
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
       .overlay, #redirectContent {
-        width: 98vw !important;
+        width: 99vw !important;
         min-width: 0 !important;
-        padding: 14vw 2vw 16vw 2vw !important;
+        padding: 10vw 2vw 18vw 2vw !important;
         max-width: none;
         font-size: 15px !important;
-        margin-bottom: 9vw;
+        margin-bottom: 13vw;
       }
       #redirectContent { font-size:14px; }
       .native-bottom {
-        padding: 0 !important;
+        bottom: 45px !important;
         min-height: 32px !important;
         height: 34px !important;
         font-size: 10px !important;
@@ -146,11 +137,10 @@
         overflow: hidden !important;
       }
       #linkContainer {
-        margin-bottom: 13vw !important; /* Abstand nach unten für Banner */
+        margin-bottom: 17vw !important;
       }
     }
   </style>
-  <!-- Popunder Script -->
   <script type="text/javascript" src="//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js"></script>
 </head>
 <body class="home">
@@ -173,78 +163,40 @@
   <div id="container-469ea093807163ac0a897b84904b05f3"></div>
 </div>
 
-<footer>
-  <p><br>
-   
-  </p>
-</footer>
-
 <script>
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
+  const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 Minuten
 
-  function click(target) {
-    window.open(DIRECT_LINK_URL, '_blank');
-    window.location.href = target;
-  }
-
-  const params = new URLSearchParams(window.location.search);
-  const urlParam = params.get('u');
-
-  function showScanningBlock() {
-    document.body.className = 'redirect';
-    document.getElementById('homeContent').style.display = 'none';
-    document.getElementById('redirectContent').style.display = 'block';
-    document.getElementById('native-banner-bottom').style.display = 'block';
-    document.getElementById('redirectContent').innerHTML = `
-      <h2>Leak Link:</h2>
-      <div class="desc" style="color:#ffb4c2">
-        <span id="scanText">Scanning for VPN, Proxy, Hosting, AdBlock, Popups, and suspicious browser...</span>
-      </div>
-      <div id="linkContainer">
-        <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
-      </div>
-    `;
-  }
-
-  function setLinkState(allowed, reasonText) {
-    if (!urlParam) return;
-    if (allowed) {
-      try {
-        const target = decodeURIComponent(urlParam);
-        document.getElementById('redirectContent').innerHTML = `
-          <h2>Leak Link:</h2>
-          <div class="desc">Click the link below to access the leak.<br></div>
-          <div id="linkContainer"></div>
-        `;
-        const linkElement = document.createElement('a');
-        linkElement.href = 'javascript:void(0)';
-        linkElement.textContent = "Click here to view the leak";
-        linkElement.rel = 'noopener noreferrer';
-        linkElement.onclick = function () {
-          click(target);
-          return false;
-        };
-        document.getElementById('linkContainer').appendChild(linkElement);
-      } catch (e) {
-        document.getElementById('redirectContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
-      }
+  // Hilfsfunktionen für LocalStorage-Flag inkl. Zeitstempel
+  function setRedirectUnlocked(val) {
+    if (!window.urlParam) return;
+    if (val) {
+      localStorage.setItem('redirect_unlocked_' + window.urlParam, JSON.stringify({
+        unlocked: true,
+        ts: Date.now()
+      }));
     } else {
-      document.getElementById('redirectContent').innerHTML = `
-        <h2>Access Denied</h2>
-        <div class="desc" style="color:#ffb4c2">
-          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies, Hosting IPs, allow Popups and use a regular browser to view this page."}
-        </div>
-        <div id="linkContainer">
-          <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
-        </div>
-      `;
+      localStorage.removeItem('redirect_unlocked_' + window.urlParam);
     }
   }
+  function isRedirectUnlocked() {
+    if (!window.urlParam) return false;
+    const raw = localStorage.getItem('redirect_unlocked_' + window.urlParam);
+    if (!raw) return false;
+    try {
+      const data = JSON.parse(raw);
+      if (!data.unlocked || !data.ts) return false;
+      // Prüfe auf Ablauf
+      if ((Date.now() - data.ts) > UNLOCK_DURATION_MS) {
+        // Abgelaufen -> löschen
+        setRedirectUnlocked(false);
+        return false;
+      }
+      return true;
+    } catch(e) { return false; }
+  }
 
-  if (urlParam) showScanningBlock();
-
-  // ... der Rest deines Scripts bleibt unverändert ...
-
+  // --- Fingerprinting & Detection ---
   function isHostingProvider(asn, org, isp) {
     const providers = [
       'Amazon', 'Google', 'Microsoft', 'OVH', 'Hetzner', 'DigitalOcean',
@@ -295,11 +247,101 @@
     return reasons;
   }
 
+  function click(target) {
+    // Nur beim ersten Klick Werbung öffnen:
+    if (!isRedirectUnlocked()) {
+      window.open(DIRECT_LINK_URL, '_blank', 'noopener');
+      setRedirectUnlocked(true);
+    }
+    // Immer direkt zur Zielseite weiterleiten
+    window.location.href = target;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const urlParam = params.get('u');
+  window.urlParam = urlParam;
+
+  function showScanningBlock() {
+    document.body.className = 'redirect';
+    document.getElementById('homeContent').style.display = 'none';
+    document.getElementById('redirectContent').style.display = 'block';
+    document.getElementById('native-banner-bottom').style.display = 'block';
+    document.getElementById('redirectContent').innerHTML = `
+      <h2>Leak Link:</h2>
+      <div class="desc" style="color:#ffb4c2">
+        <span id="scanText">Scanning for VPN, Proxy, Hosting, AdBlock, Popups, and suspicious browser...</span>
+      </div>
+      <div id="linkContainer">
+        <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
+      </div>
+    `;
+  }
+
+  function setLinkState(allowed, reasonText) {
+    if (!urlParam) return;
+    if (allowed) {
+      try {
+        const target = decodeURIComponent(urlParam);
+        document.getElementById('redirectContent').innerHTML = `
+          <h2>Leak Link:</h2>
+          <div class="desc">Click the link below to access the leak.<br></div>
+          <div id="linkContainer"></div>
+        `;
+        const linkElement = document.createElement('a');
+        linkElement.href = target;
+        linkElement.textContent = isRedirectUnlocked() ? "Go to the leak" : "Click here to view the leak";
+        linkElement.rel = 'noopener noreferrer';
+        linkElement.onclick = function (e) {
+          e.preventDefault();
+          click(target);
+          return false;
+        };
+        document.getElementById('linkContainer').appendChild(linkElement);
+
+        // Hinweis anzeigen, wenn unlocked bald abläuft (optional)
+        if (isRedirectUnlocked()) {
+          const raw = localStorage.getItem('redirect_unlocked_' + window.urlParam);
+          if (raw) {
+            const data = JSON.parse(raw);
+            const remaining = UNLOCK_DURATION_MS - (Date.now() - data.ts);
+            if (remaining > 0) {
+              const mins = Math.floor(remaining / 60000);
+              const secs = Math.floor((remaining % 60000) / 1000);
+              const info = document.createElement('div');
+              info.style.fontSize = "13px";
+              info.style.marginTop = "7px";
+              info.style.color = "#ffd8fd";
+              info.innerText = "Direct access unlocked for " + mins + ":" + (secs<10?"0":"") + secs + " min.";
+              document.getElementById('linkContainer').appendChild(info);
+            }
+          }
+        }
+      } catch (e) {
+        document.getElementById('redirectContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
+      }
+    } else {
+      document.getElementById('redirectContent').innerHTML = `
+        <h2>Access Denied</h2>
+        <div class="desc" style="color:#ffb4c2">
+          ${reasonText || "Please disable all AdBlockers, VPNs, Proxies, Hosting IPs, allow Popups and use a regular browser to view this page."}
+        </div>
+        <div id="linkContainer">
+          <a href="javascript:void(0)" style="pointer-events:none;opacity:0.6;text-decoration:none;background:#d4d4d488;">Link Locked</a>
+        </div>
+      `;
+    }
+  }
+
+  if (urlParam) showScanningBlock();
+
   async function checkConditions() {
     if (!urlParam) return;
+
     let blocked = false;
     let reasons = [];
     let ipCountry = null;
+
+    // --- Adblock check ---
     const ad = document.createElement('div');
     ad.className = 'adsbox';
     ad.style.height = '1px';
@@ -309,6 +351,8 @@
       reasons.push("AdBlock detected. Please disable AdBlock.");
     }
     ad.remove();
+
+    // --- ipapi.co VPN/Proxy/Tor check + country for fingerprint ---
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
@@ -322,6 +366,8 @@
       }
       if (data.country) ipCountry = data.country;
     } catch (e) {}
+
+    // --- ip-api.com VPN/Proxy check ---
     try {
       const res = await fetch('http://ip-api.com/json/?fields=hosting,proxy,org,as,isp');
       const data = await res.json();
@@ -334,6 +380,8 @@
         reasons.push("Hosting/datacenter IP detected (ip-api.com).");
       }
     } catch (e) {}
+
+    // --- ipwho.is VPN/Proxy/Hosting check ---
     try {
       const res = await fetch('https://ipwho.is/');
       const data = await res.json();
@@ -350,6 +398,8 @@
         reasons.push("Hosting/datacenter IP detected (ipwho.is).");
       }
     } catch (e) {}
+
+    // --- Popup blocker check ---
     let popupTest = window.open('', '', 'width=100,height=100');
     if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
       blocked = true;
@@ -357,11 +407,14 @@
     } else {
       popupTest.close();
     }
+
+    // --- Fingerprinting checks ---
     let fpReasons = suspiciousFingerprint(ipCountry);
     if (fpReasons.length > 0) {
       blocked = true;
       reasons.push(...fpReasons.map(r => "Suspicious browser: " + r));
     }
+
     setTimeout(() => {
       if (blocked) {
         setLinkState(false, reasons.join('<br>'));
