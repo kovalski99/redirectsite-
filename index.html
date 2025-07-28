@@ -87,7 +87,9 @@
       text-align: center;
       padding: 0;
       min-height: 0;
+      pointer-events: none;
     }
+    .native-bottom > * { pointer-events: auto; }
     .btn {
       background-color: #5865f2;
       color: white;
@@ -112,29 +114,18 @@
       color: #b9bbbe;
       margin: 10px 0;
     }
-    footer {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      color: white;
-      z-index: 100;
-      text-shadow: 0 1px 2px #000b;
-    }
-    /* MOBILE OPTIMIZED BANNER & CONTENT */
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
       .overlay, #redirectContent {
-        width: 98vw !important;
+        width: 99vw !important;
         min-width: 0 !important;
-        padding: 14vw 2vw 16vw 2vw !important;
+        padding: 10vw 2vw 18vw 2vw !important;
         max-width: none;
         font-size: 15px !important;
-        margin-bottom: 9vw;
+        margin-bottom: 13vw;
       }
       #redirectContent { font-size:14px; }
       .native-bottom {
-        padding: 0 !important;
+        bottom: 45px !important;
         min-height: 32px !important;
         height: 34px !important;
         font-size: 10px !important;
@@ -146,11 +137,10 @@
         overflow: hidden !important;
       }
       #linkContainer {
-        margin-bottom: 13vw !important; /* Abstand nach unten für Banner */
+        margin-bottom: 17vw !important;
       }
     }
   </style>
-  <!-- Popunder Script -->
   <script type="text/javascript" src="//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js"></script>
 </head>
 <body class="home">
@@ -173,22 +163,52 @@
   <div id="container-469ea093807163ac0a897b84904b05f3"></div>
 </div>
 
-<footer>
-  <p><br>
-   
-  </p>
-</footer>
-
 <script>
   const DIRECT_LINK_URL = 'https://nevillequery.com/w3nhbxk29?key=25cce52923eca2e5c00ec5a4d16ab7f2';
+  const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 Minuten
+
+  // Hilfsfunktionen für LocalStorage-Flag inkl. Zeitstempel
+  function setRedirectUnlocked(val) {
+    if (!window.urlParam) return;
+    if (val) {
+      localStorage.setItem('redirect_unlocked_' + window.urlParam, JSON.stringify({
+        unlocked: true,
+        ts: Date.now()
+      }));
+    } else {
+      localStorage.removeItem('redirect_unlocked_' + window.urlParam);
+    }
+  }
+  function isRedirectUnlocked() {
+    if (!window.urlParam) return false;
+    const raw = localStorage.getItem('redirect_unlocked_' + window.urlParam);
+    if (!raw) return false;
+    try {
+      const data = JSON.parse(raw);
+      if (!data.unlocked || !data.ts) return false;
+      // Prüfe auf Ablauf
+      if ((Date.now() - data.ts) > UNLOCK_DURATION_MS) {
+        // Abgelaufen -> löschen
+        setRedirectUnlocked(false);
+        return false;
+      }
+      return true;
+    } catch(e) { return false; }
+  }
 
   function click(target) {
-    window.open(DIRECT_LINK_URL, '_blank');
+    // Nur beim ersten Klick Werbung öffnen:
+    if (!isRedirectUnlocked()) {
+      window.open(DIRECT_LINK_URL, '_blank', 'noopener');
+      setRedirectUnlocked(true);
+    }
+    // Immer direkt zur Zielseite weiterleiten
     window.location.href = target;
   }
 
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get('u');
+  window.urlParam = urlParam;
 
   function showScanningBlock() {
     document.body.className = 'redirect';
@@ -217,14 +237,34 @@
           <div id="linkContainer"></div>
         `;
         const linkElement = document.createElement('a');
-        linkElement.href = 'javascript:void(0)';
-        linkElement.textContent = "Click here to view the leak";
+        linkElement.href = target;
+        linkElement.textContent = isRedirectUnlocked() ? "Go to the leak" : "Click here to view the leak";
         linkElement.rel = 'noopener noreferrer';
-        linkElement.onclick = function () {
+        linkElement.onclick = function (e) {
+          e.preventDefault();
           click(target);
           return false;
         };
         document.getElementById('linkContainer').appendChild(linkElement);
+
+        // Hinweis anzeigen, wenn unlocked bald abläuft (optional)
+        if (isRedirectUnlocked()) {
+          const raw = localStorage.getItem('redirect_unlocked_' + window.urlParam);
+          if (raw) {
+            const data = JSON.parse(raw);
+            const remaining = UNLOCK_DURATION_MS - (Date.now() - data.ts);
+            if (remaining > 0) {
+              const mins = Math.floor(remaining / 60000);
+              const secs = Math.floor((remaining % 60000) / 1000);
+              const info = document.createElement('div');
+              info.style.fontSize = "13px";
+              info.style.marginTop = "7px";
+              info.style.color = "#ffd8fd";
+              info.innerText = "Direct access unlocked for " + mins + ":" + (secs<10?"0":"") + secs + " min.";
+              document.getElementById('linkContainer').appendChild(info);
+            }
+          }
+        }
       } catch (e) {
         document.getElementById('redirectContent').innerHTML = "<h2>Invalid Link</h2><p>The provided link is not properly encoded.</p>";
       }
@@ -243,135 +283,12 @@
 
   if (urlParam) showScanningBlock();
 
-  // ... der Rest deines Scripts bleibt unverändert ...
-
-  function isHostingProvider(asn, org, isp) {
-    const providers = [
-      'Amazon', 'Google', 'Microsoft', 'OVH', 'Hetzner', 'DigitalOcean',
-      'Contabo', 'Linode', 'Leaseweb', 'Choopa', 'Online S.A.S.', 'Alibaba',
-      'Vultr', 'Scaleway', 'Hostinger', 'IONOS', 'InterNetX', 'Kimsufi', 'Hivelocity'
-    ];
-    let str = (asn || '') + ' ' + (org || '') + ' ' + (isp || '');
-    str = str.toLowerCase();
-    return providers.some(p => str.includes(p.toLowerCase()));
-  }
-
-  function suspiciousUserAgent() {
-    const ua = navigator.userAgent;
-    if (/TorBrowser|Iceweasel|GoBrowser|Lynx|PhantomJS|Headless/i.test(ua)) return true;
-    if (ua.length < 30) return true;
-    return false;
-  }
-
-  function suspiciousFingerprint(ipCountry) {
-    let reasons = [];
-    try {
-      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-      if (ipCountry && tz) {
-        if (tz.match(/^Europe/) && !["DE","FR","NL","AT","CH","BE","PL","SE","FI","DK","IT","ES","NO","CZ","GR","IE","PT","SK","HU"].includes(ipCountry)) {
-          reasons.push("Timezone and IP country do not match.");
-        }
-      }
-    } catch(e){}
-    if (!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection)) {
-      reasons.push("WebRTC disabled or not supported.");
-    }
-    try {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) reasons.push("Canvas/WebGL disabled or blocked.");
-    } catch(e){ reasons.push("Canvas/WebGL disabled or blocked."); }
-    try {
-      const ctx = window.AudioContext || window.webkitAudioContext;
-      if (!ctx) reasons.push("AudioContext blocked.");
-    } catch(e){ reasons.push("AudioContext blocked."); }
-    if (navigator.doNotTrack == "1" || window.doNotTrack == "1") {
-      reasons.push("Do Not Track is enabled.");
-    }
-    if (suspiciousUserAgent()) reasons.push("Suspicious or privacy-focused browser detected.");
-    if (window.screen && (window.screen.width < 350 || window.screen.height < 350 || window.screen.width > 3000)) {
-      reasons.push("Unusual screen size or device.");
-    }
-    return reasons;
-  }
-
-  async function checkConditions() {
+  window.addEventListener('load', function() {
     if (!urlParam) return;
-    let blocked = false;
-    let reasons = [];
-    let ipCountry = null;
-    const ad = document.createElement('div');
-    ad.className = 'adsbox';
-    ad.style.height = '1px';
-    document.body.appendChild(ad);
-    if (ad.offsetHeight === 0) {
-      blocked = true;
-      reasons.push("AdBlock detected. Please disable AdBlock.");
-    }
-    ad.remove();
-    try {
-      const res = await fetch('https://ipapi.co/json/');
-      const data = await res.json();
-      if (data.security && (data.security.proxy || data.security.vpn || data.security.tor)) {
-        blocked = true;
-        reasons.push("VPN/Proxy/Tor detected (ipapi.co). Please turn off your VPN or Proxy.");
-      }
-      if (isHostingProvider(data.asn, data.org, data.org)) {
-        blocked = true;
-        reasons.push("Hosting or datacenter IP detected (ipapi.co). Please use a residential connection.");
-      }
-      if (data.country) ipCountry = data.country;
-    } catch (e) {}
-    try {
-      const res = await fetch('http://ip-api.com/json/?fields=hosting,proxy,org,as,isp');
-      const data = await res.json();
-      if (data.proxy === true) {
-        blocked = true;
-        reasons.push("Proxy detected (ip-api.com).");
-      }
-      if (data.hosting === true || isHostingProvider(data.as, data.org, data.isp)) {
-        blocked = true;
-        reasons.push("Hosting/datacenter IP detected (ip-api.com).");
-      }
-    } catch (e) {}
-    try {
-      const res = await fetch('https://ipwho.is/');
-      const data = await res.json();
-      if (data.connection && (data.connection.proxy || data.connection.tor)) {
-        blocked = true;
-        reasons.push("Proxy/Tor detected (ipwho.is).");
-      }
-      if (data.connection && data.connection.type === "hosting") {
-        blocked = true;
-        reasons.push("Hosting IP detected (ipwho.is).");
-      }
-      if (isHostingProvider(data.connection && data.connection.asn, data.connection && data.connection.org, data.connection && data.connection.isp)) {
-        blocked = true;
-        reasons.push("Hosting/datacenter IP detected (ipwho.is).");
-      }
-    } catch (e) {}
-    let popupTest = window.open('', '', 'width=100,height=100');
-    if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
-      blocked = true;
-      reasons.push("Popup blocker detected. Please allow popups for this page.");
-    } else {
-      popupTest.close();
-    }
-    let fpReasons = suspiciousFingerprint(ipCountry);
-    if (fpReasons.length > 0) {
-      blocked = true;
-      reasons.push(...fpReasons.map(r => "Suspicious browser: " + r));
-    }
-    setTimeout(() => {
-      if (blocked) {
-        setLinkState(false, reasons.join('<br>'));
-      } else {
-        setLinkState(true, "");
-      }
-    }, 300);
-  }
-
-  window.addEventListener('load', checkConditions);
+    setTimeout(function(){
+      setLinkState(true, "");
+    }, 200);
+  });
 </script>
 <script type='text/javascript' src='//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>
 </body>
