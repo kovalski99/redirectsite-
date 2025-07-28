@@ -21,6 +21,7 @@
       text-align: center;
       padding: 40px 20px 30px 20px;
       z-index: 10;
+      background: #2f3136dd;
     }
     #homeContent {
       background: #2f3136dd;
@@ -84,6 +85,8 @@
       width: 100vw;
       background: none !important;
       text-align: center;
+      padding: 0;
+      min-height: 0;
     }
     .btn {
       background-color: #5865f2;
@@ -119,12 +122,34 @@
       z-index: 100;
       text-shadow: 0 1px 2px #000b;
     }
-    @media (max-width:400px) {
-      .overlay, #redirectContent { width:95vw; min-width:0; padding:18px 2vw 16px 2vw; }
+    /* MOBILE OPTIMIZED BANNER & CONTENT */
+    @media (max-width: 500px) {
+      .overlay, #redirectContent {
+        width: 98vw !important;
+        min-width: 0 !important;
+        padding: 14vw 2vw 16vw 2vw !important;
+        max-width: none;
+        font-size: 15px !important;
+        margin-bottom: 9vw;
+      }
       #redirectContent { font-size:14px; }
+      .native-bottom {
+        padding: 0 !important;
+        min-height: 32px !important;
+        height: 34px !important;
+        font-size: 10px !important;
+      }
+      #container-469ea093807163ac0a897b84904b05f3 {
+        min-height: 26px !important;
+        height: 28px !important;
+        max-height: 32px !important;
+        overflow: hidden !important;
+      }
+      #linkContainer {
+        margin-bottom: 13vw !important; /* Abstand nach unten für Banner */
+      }
     }
   </style>
-
   <!-- Popunder Script -->
   <script type="text/javascript" src="//nevillequery.com/05/53/8c/05538ccfd2ac65eb254159df90e03fe5.js"></script>
 </head>
@@ -218,6 +243,8 @@
 
   if (urlParam) showScanningBlock();
 
+  // ... der Rest deines Scripts bleibt unverändert ...
+
   function isHostingProvider(asn, org, isp) {
     const providers = [
       'Amazon', 'Google', 'Microsoft', 'OVH', 'Hetzner', 'DigitalOcean',
@@ -230,7 +257,6 @@
   }
 
   function suspiciousUserAgent() {
-    // Very basic: block TorBrowser or anything really "weird"
     const ua = navigator.userAgent;
     if (/TorBrowser|Iceweasel|GoBrowser|Lynx|PhantomJS|Headless/i.test(ua)) return true;
     if (ua.length < 30) return true;
@@ -239,7 +265,6 @@
 
   function suspiciousFingerprint(ipCountry) {
     let reasons = [];
-    // 1. Timezone vs IP-Country mismatch
     try {
       let tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       if (ipCountry && tz) {
@@ -248,49 +273,33 @@
         }
       }
     } catch(e){}
-
-    // 2. WebRTC disabled
     if (!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection)) {
       reasons.push("WebRTC disabled or not supported.");
     }
-
-    // 3. Canvas/WebGL disabled
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (!ctx) reasons.push("Canvas/WebGL disabled or blocked.");
     } catch(e){ reasons.push("Canvas/WebGL disabled or blocked."); }
-
-    // 4. AudioContext fingerprint blocked
     try {
       const ctx = window.AudioContext || window.webkitAudioContext;
       if (!ctx) reasons.push("AudioContext blocked.");
     } catch(e){ reasons.push("AudioContext blocked."); }
-
-    // 5. Do Not Track
     if (navigator.doNotTrack == "1" || window.doNotTrack == "1") {
       reasons.push("Do Not Track is enabled.");
     }
-
-    // 6. Suspicious User Agent
     if (suspiciousUserAgent()) reasons.push("Suspicious or privacy-focused browser detected.");
-
-    // 7. Screen size/ratio (very small/very big = suspicious)
     if (window.screen && (window.screen.width < 350 || window.screen.height < 350 || window.screen.width > 3000)) {
       reasons.push("Unusual screen size or device.");
     }
-
     return reasons;
   }
 
   async function checkConditions() {
     if (!urlParam) return;
-
     let blocked = false;
     let reasons = [];
     let ipCountry = null;
-
-    // Adblock check
     const ad = document.createElement('div');
     ad.className = 'adsbox';
     ad.style.height = '1px';
@@ -300,8 +309,6 @@
       reasons.push("AdBlock detected. Please disable AdBlock.");
     }
     ad.remove();
-
-    // ipapi.co VPN/Proxy/Tor + country for fingerprint
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
@@ -315,8 +322,6 @@
       }
       if (data.country) ipCountry = data.country;
     } catch (e) {}
-
-    // ip-api.com
     try {
       const res = await fetch('http://ip-api.com/json/?fields=hosting,proxy,org,as,isp');
       const data = await res.json();
@@ -329,8 +334,6 @@
         reasons.push("Hosting/datacenter IP detected (ip-api.com).");
       }
     } catch (e) {}
-
-    // ipwho.is
     try {
       const res = await fetch('https://ipwho.is/');
       const data = await res.json();
@@ -347,8 +350,6 @@
         reasons.push("Hosting/datacenter IP detected (ipwho.is).");
       }
     } catch (e) {}
-
-    // Popup blocker check
     let popupTest = window.open('', '', 'width=100,height=100');
     if (!popupTest || popupTest.closed || typeof popupTest.closed === 'undefined') {
       blocked = true;
@@ -356,14 +357,11 @@
     } else {
       popupTest.close();
     }
-
-    // Fingerprinting checks
     let fpReasons = suspiciousFingerprint(ipCountry);
     if (fpReasons.length > 0) {
       blocked = true;
       reasons.push(...fpReasons.map(r => "Suspicious browser: " + r));
     }
-
     setTimeout(() => {
       if (blocked) {
         setLinkState(false, reasons.join('<br>'));
@@ -375,9 +373,6 @@
 
   window.addEventListener('load', checkConditions);
 </script>
-
-<!-- Social Bar Script -->
 <script type='text/javascript' src='//nevillequery.com/b1/f8/52/b1f85271852f69f54c54d2c999ec0f35.js'></script>
-
 </body>
 </html>
